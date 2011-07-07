@@ -1,0 +1,122 @@
+Cmp-Mod V01 Created by CvPCB (2010-04-21 BZR 23xx)-stable date = Сбт 25 Июн 2011 02:27:55
+
+BeginCmp
+TimeStamp = /4E03D1D9;
+Reference = D1;
+ValeurCmp = LED;
+IdModule  = SIL-2;
+EndCmp
+
+BeginCmp
+TimeStamp = /4E03CE14;
+Reference = D2;
+ValeurCmp = TSOPXX36;
+IdModule  = SIL-3;
+EndCmp
+
+BeginCmp
+TimeStamp = /4E05058E;
+Reference = K1;
+ValeurCmp = CONN_3;
+IdModule  = SIL-3;
+EndCmp
+
+BeginCmp
+TimeStamp = /4E050597;
+Reference = K2;
+ValeurCmp = CONN_3;
+IdModule  = SIL-3;
+EndCmp
+
+BeginCmp
+TimeStamp = /4E05059A;
+Reference = K3;
+ValeurCmp = CONN_3;
+IdModule  = SIL-3;
+EndCmp
+
+BeginCmp
+TimeStamp = /4E05059D;
+Reference = K4;
+ValeurCmp = CONN_3;
+IdModule  = SIL-3;
+EndCmp
+
+BeginCmp
+TimeStamp = /4E0505A0;
+Reference = K5;
+ValeurCmp = CONN_3;
+IdModule  = SIL-3;
+EndCmp
+
+BeginCmp
+TimeStamp = /4E0505A3;
+Reference = K6;
+ValeurCmp = CONN_3;
+IdModule  = SIL-3;
+EndCmp
+
+BeginCmp
+TimeStamp = /4E03C12C;
+Reference = P1;
+ValeurCmp = CONN_9;
+IdModule  = SIL-9;
+EndCmp
+
+BeginCmp
+TimeStamp = /4E0505F6;
+Reference = P2;
+ValeurCmp = CONN_2;
+IdModule  = SIL-2;
+EndCmp
+
+BeginCmp
+TimeStamp = /4E0505ED;
+Reference = P3;
+ValeurCmp = CONN_2;
+IdModule  = SIL-2;
+EndCmp
+
+BeginCmp
+TimeStamp = /4E0505D8;
+Reference = P4;
+ValeurCmp = CONN_2;
+IdModule  = SIL-2;
+EndCmp
+
+BeginCmp
+TimeStamp = /4E0505DE;
+Reference = P5;
+ValeurCmp = CONN_2;
+IdModule  = SIL-2;
+EndCmp
+
+BeginCmp
+TimeStamp = /4E0505E3;
+Reference = P6;
+ValeurCmp = CONN_2;
+IdModule  = SIL-2;
+EndCmp
+
+BeginCmp
+TimeStamp = /4E0505E6;
+Reference = P7;
+ValeurCmp = CONN_2;
+IdModule  = SIL-2;
+EndCmp
+
+BeginCmp
+TimeStamp = /4E03C44E;
+Reference = U1;
+ValeurCmp = 74HC4094;
+IdModule  = DIP-16__300;
+EndCmp
+
+BeginCmp
+TimeStamp = /4E03C1DF;
+Reference = U2;
+ValeurCmp = 74HC4051;
+IdModule  = DIP-16__300;
+EndCmp
+
+EndListe

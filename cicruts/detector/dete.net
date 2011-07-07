@@ -1,0 +1,126 @@
+# EESchema Netlist Version 1.1 created  Сбт 25 Июн 2011 02:27:55
+(
+ ( /4E03D1D9 SIL-2 D1 LED
+  ( 1 N-000021 )
+  ( 2 GND )
+ )
+ ( /4E03CE14 SIL-3 D2 TSOPXX36
+  ( 1 N-000020 )
+  ( 2 GND )
+  ( 3 VCC )
+ )
+ ( /4E05058E SIL-3 K1 CONN_3
+  ( 1 N-000015 )
+  ( 2 GND )
+  ( 3 VCC )
+ )
+ ( /4E050597 SIL-3 K2 CONN_3
+  ( 1 N-000025 )
+  ( 2 GND )
+  ( 3 VCC )
+ )
+ ( /4E05059A SIL-3 K3 CONN_3
+  ( 1 N-000026 )
+  ( 2 GND )
+  ( 3 VCC )
+ )
+ ( /4E05059D SIL-3 K4 CONN_3
+  ( 1 N-000012 )
+  ( 2 GND )
+  ( 3 VCC )
+ )
+ ( /4E0505A0 SIL-3 K5 CONN_3
+  ( 1 N-000010 )
+  ( 2 GND )
+  ( 3 VCC )
+ )
+ ( /4E0505A3 SIL-3 K6 CONN_3
+  ( 1 N-000011 )
+  ( 2 GND )
+  ( 3 VCC )
+ )
+ ( /4E03C12C SIL-9 P1 CONN_9
+  ( 1 VCC )
+  ( 2 N-000022 )
+  ( 3 N-000014 )
+  ( 4 N-000023 )
+  ( 5 N-000013 )
+  ( 6 N-000024 )
+  ( 7 N-000017 )
+  ( 8 N-000016 )
+  ( 9 GND )
+ )
+ ( /4E0505F6 SIL-2 P2 CONN_2
+  ( 1 N-000008 )
+  ( 2 GND )
+ )
+ ( /4E0505ED SIL-2 P3 CONN_2
+  ( 1 N-000027 )
+  ( 2 GND )
+ )
+ ( /4E0505D8 SIL-2 P4 CONN_2
+  ( 1 N-000001 )
+  ( 2 GND )
+ )
+ ( /4E0505DE SIL-2 P5 CONN_2
+  ( 1 N-000002 )
+  ( 2 GND )
+ )
+ ( /4E0505E3 SIL-2 P6 CONN_2
+  ( 1 N-000006 )
+  ( 2 GND )
+ )
+ ( /4E0505E6 SIL-2 P7 CONN_2
+  ( 1 N-000007 )
+  ( 2 GND )
+ )
+ ( /4E03C44E DIP-16__300 U1 74HC4094
+  ( 1 N-000022 )
+  ( 2 N-000014 )
+  ( 3 N-000023 )
+  ( 4 N-000021 )
+  ( 5 N-000001 )
+  ( 6 N-000002 )
+  ( 7 N-000006 )
+  ( 8 GND )
+  ( 9 ? )
+  ( 10 ? )
+  ( 11 ? )
+  ( 12 N-000008 )
+  ( 13 N-000027 )
+  ( 14 N-000007 )
+  ( 15 VCC )
+  ( 16 VCC )
+ )
+ ( /4E03C1DF DIP-16__300 U2 74HC4051
+  ( 1 N-000012 )
+  ( 2 N-000011 )
+  ( 3 N-000013 )
+  ( 4 ? )
+  ( 5 N-000010 )
+  ( 6 GND )
+  ( 7 GND )
+  ( 8 GND )
+  ( 9 N-000024 )
+  ( 10 N-000017 )
+  ( 11 N-000016 )
+  ( 12 N-000026 )
+  ( 13 N-000020 )
+  ( 14 N-000015 )
+  ( 15 N-000025 )
+  ( 16 VCC )
+ )
+)
+*
+{ Allowed footprints by component:
+$component D1
+ LED-3MM
+ LED-5MM
+ LED-10MM
+ LED-0603
+ LED-0805
+ LED-1206
+ LEDV
+$endlist
+$endfootprintlist
+}

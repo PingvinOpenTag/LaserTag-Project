@@ -1,0 +1,27 @@
+eeschema (2010-04-21 BZR 23xx)-stable  >> Creation date: Птн 24 Июн 2011 04:08:03
+
+#Cmp ( порядок = Обозначение )
+| D1         LED         
+| D2         TSOPXX36    
+| P1         CONN_9      
+| P2         CONN_4      
+| P3         CONN_4      
+| P4         CONN_4      
+| P5         CONN_4      
+| P6         CONN_4      
+| P7         CONN_4      
+#End Cmp
+
+#Cmp ( порядок = Значение )
+| CONN_4       P2        
+| CONN_4       P3        
+| CONN_4       P4        
+| CONN_4       P5        
+| CONN_4       P6        
+| CONN_4       P7        
+| CONN_9       P1        
+| LED          D1        
+| TSOPXX36     D2        
+#End Cmp
+
+#End List
