@@ -1,8 +1,41 @@
 #include <stdio.h>
 #include <curses.h>
 
-int X,Y;
+WINDOW *create_newwin(int height, int width, int starty, int startx)
+{	WINDOW *local_win;
+
+	local_win = newwin(height, width, starty, startx);
+	box(local_win, 0 , 0);		/* 0, 0 gives default characters 
+					 * for the vertical and horizontal
+					 * lines			*/
+	wrefresh(local_win);		/* Show that box 		*/
+
+	return local_win;
+}
+
 WINDOW *w_help;
+
+void HelpWindow()
+{
+  int L,C;
+  L=LINES;
+  C=COLS;
+  // Malloc's windows
+  if(C>90) C=90;
+  if(L>30) L=30;
+
+  w_help = newwin(L, C, 0, 0);
+  box(w_help, 0, 0);
+  int x,y;
+  x=y=2;
+  getyx(w_help, x,y);
+//  wborder(w_help, '|', '|', '-', '-', '+','+', '+','+');
+  wprintw(w_help, "         HELP            ");
+  wrefresh(w_help);
+  delwin(w_help);
+
+
+}
 
 void InitIt()
 {
@@ -10,16 +43,21 @@ void InitIt()
   initscr();  
   noecho();
   raw();
+  cbreak();
+  //curs_set(2);
   keypad(stdscr, TRUE);// F1, F2...
-
-  getmaxyx(stdscr, X, Y);
+  printw("COLS,LINES: %i,%i\n", COLS, LINES);
+  refresh();
 
   // Malloc's windows
-  w_help = newwin(20, 20, 1, 1);
+  w_help = newwin(3, 10, 10, 30);
   box(w_help, 0, 0);
-  wprintw(w_help, "Win");
+  wborder(w_help, '|', '|', '-', '-', '+','+', '+','+');
+  wprintw(w_help, "Winfdfdf dfdf");
+  wprintw(w_help, "Winfdfdf dfdf");
+  wprintw(w_help, "Winfdfdf dfdf");
   wrefresh(w_help);
-
+  delwin(w_help);
 }
 
 void CloseIt()
@@ -30,14 +68,20 @@ void CloseIt()
 
 void PrintFace()
 {
-  
+
 }
 
 int main(void)
 {
+
   InitIt();
+ // wprintw(stdscr, "Win");
+  //refresh();
+  //setxy(20,20);
   while(true)
   {
+    HelpWindow();
+   //create_newwin(10,40,10,10);
     //PrintHelp();
     int kcode=getch();
 
@@ -46,6 +90,7 @@ int main(void)
       default:
               printw("It key(code:%i) don't support, sorry\n", kcode);
     }
+    refresh();
   }
 
 ExitProg:
