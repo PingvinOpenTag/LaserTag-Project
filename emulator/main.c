@@ -1,6 +1,31 @@
 #include <stdio.h>
 #include <curses.h>
 
+#define DESKRSIZE 100
+
+int test1(void* parms){
+
+	return 0;
+}
+int test2(void* parms){
+
+	return 0;
+}
+
+struct option{
+	int (*func)(void* parms);
+	int key;
+	char* descript;
+	//char* descript[DESKRSIZE];
+};
+
+struct option optlist[] = {
+	{test1, 10, "Test"},
+	{test2, 2, "Test 3"},
+	{test2, 3, "Test 4"},
+	{test2, 4, "Test 5"}
+};
+
 WINDOW *create_newwin(int height, int width, int starty, int startx)
 {	WINDOW *local_win;
 
@@ -18,12 +43,16 @@ WINDOW *w_help;
 void HelpWindow()
 {
   int L,C;
+	int i;
+	int optsize = sizeof(optlist)/sizeof(struct option);
   L=LINES;
   C=COLS;
+	int WL=optsize+2;
+
   // Malloc's windows
   const char* title = " HELP ";
   if(C>90) C=90;
-  if(L>30) L=30;
+  if(L>WL) L=WL;
 
   w_help = newwin(L, C, 0, 0);
   box(w_help, 0, 0);
@@ -33,12 +62,12 @@ void HelpWindow()
   wprintw(w_help, title);
 
   // INFO
-  wmove(w_help,1,3);
-  wprintw(w_help, "Space -- One shot");
+	for(i=0;i<optsize;i++){
+		struct option *o=&optlist[i];
+  	wmove(w_help,i+1,3);
+		wprintw(w_help, "%i -- %s", o->key, o->descript);
+	}
   
-  wmove(w_help,2,3);
-  wprintw(w_help, "a     -- hit me");
-
   wrefresh(w_help);
   delwin(w_help);
 }
@@ -62,7 +91,6 @@ void InitIt()
   wrefresh(w_help);
   delwin(w_help);
   move(30,0);
-
 }
 
 void CloseIt()
@@ -70,24 +98,13 @@ void CloseIt()
   endwin();
 }
 
-
-void PrintFace()
-{
-
-}
-
 int main(void)
 {
 
   InitIt();
- // wprintw(stdscr, "Win");
-  //refresh();
-  //setxy(20,20);
   while(true)
   {
     HelpWindow();
-   //create_newwin(10,40,10,10);
-    //PrintHelp();
     int kcode=getch();
 
     switch(kcode){
