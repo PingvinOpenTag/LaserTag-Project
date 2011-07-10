@@ -1,29 +1,39 @@
 #include <stdio.h>
 #include <curses.h>
 
-#define DESKRSIZE 100
+#include "../logick/gun.h"
 
-int test1(void* parms){
-
+/*! Hitting overlay
+ */
+int ovr_hitting(void *arg){
+  hitting(0,0,1,0);
 	return 0;
 }
-int test2(void* parms){
-
+/*! Init overlay
+ */
+int ovr_init(void *arg){
+  init();
 	return 0;
 }
+/*! Shoot overlay
+ */
+int ovr_shoot(void *arg){
+  shoot();
+	return 0;
+}
+/////// END OVERLAYS /////////
+//////////////////////////////
 
 struct option{
 	int (*func)(void* parms);
 	int key;
 	char* descript;
-	//char* descript[DESKRSIZE];
 };
 
 struct option optlist[] = {
-	{test1, 10, "Test"},
-	{test2, 2, "Test 3"},
-	{test2, 3, "Test 4"},
-	{test2, 4, "Test 5"}
+	{init,    10, "Init GUN"},
+	{shoot,   2,  "Shoot from GUN"},
+	{ovr_hitting, 3,  "Hitting from Player"},
 };
 
 WINDOW *create_newwin(int height, int width, int starty, int startx)
