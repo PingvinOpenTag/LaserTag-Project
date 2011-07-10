@@ -21,20 +21,26 @@ void HelpWindow()
   L=LINES;
   C=COLS;
   // Malloc's windows
+  const char* title = " HELP ";
   if(C>90) C=90;
   if(L>30) L=30;
 
   w_help = newwin(L, C, 0, 0);
   box(w_help, 0, 0);
-  int x,y;
-  x=y=2;
-  getyx(w_help, x,y);
-//  wborder(w_help, '|', '|', '-', '-', '+','+', '+','+');
-  wprintw(w_help, "         HELP            ");
+
+  // TITLE
+  wmove(w_help,0,C/2-sizeof(title));
+  wprintw(w_help, title);
+
+  // INFO
+  wmove(w_help,1,3);
+  wprintw(w_help, "Space -- One shot");
+  
+  wmove(w_help,2,3);
+  wprintw(w_help, "a     -- hit me");
+
   wrefresh(w_help);
   delwin(w_help);
-
-
 }
 
 void InitIt()
@@ -53,11 +59,10 @@ void InitIt()
   w_help = newwin(3, 10, 10, 30);
   box(w_help, 0, 0);
   wborder(w_help, '|', '|', '-', '-', '+','+', '+','+');
-  wprintw(w_help, "Winfdfdf dfdf");
-  wprintw(w_help, "Winfdfdf dfdf");
-  wprintw(w_help, "Winfdfdf dfdf");
   wrefresh(w_help);
   delwin(w_help);
+  move(30,0);
+
 }
 
 void CloseIt()
