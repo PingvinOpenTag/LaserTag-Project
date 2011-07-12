@@ -18,6 +18,16 @@
 
 /*! Default init 
  */
+#include <stdint.h>
+
+struct T_gun_status {
+  uint16_t amons;
+  uint16_t health;
+
+  uint8_t life;
+};
+
+extern struct T_gun_status gun_status;
 
 int init();
 int shoot();

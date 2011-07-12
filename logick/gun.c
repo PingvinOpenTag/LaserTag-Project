@@ -17,22 +17,23 @@
  */
 
 #include <hardware.h>
+#include "gun.h"
 
-int amons;
-int health;
+struct T_gun_status gun_status;
 
 /*! Default init 
  */
 
 int init(){
-	amons=100;
-	health=100;
+	gun_status.amons=100;
+	gun_status.health=100;
+  gun_status.life=1;
 	switch_to_life();
 	return 0;
 }
 
 int shoot(){
-	amons--;
+	gun_status.amons--;
 	block_amo(500); // 0.5 second
 	return 0;
 }
@@ -46,7 +47,7 @@ int shoot(){
 int hitting(int group, int pid, int power, int loc)
 {
 	//FIXME save groput, pid, power, loc
-	if(--health<0){
+	if(--gun_status.health<0){
 		switch_to_dead();
 	}
 
