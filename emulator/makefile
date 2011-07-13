@@ -1,5 +1,6 @@
 
 all:
+	make -C ../logick
 	gcc -c -save-temps emu.c
 	gcc -c hardware.c -I../interfaces
 	gcc emu.o hardware.o ../logick/gun.o -o main `ncurses5-config --libs`

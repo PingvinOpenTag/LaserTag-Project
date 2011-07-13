@@ -41,7 +41,17 @@ int switch_to_dead()
 
 int block_amo(int ms)
 {
-	printf("Block amo %i ms\n", ms);
+	printw("Block amo %i ms\n", ms);
 
 	return 0;
+}
+
+
+// HOOKS
+
+hook_you_dead(){
+  printw("you are dead\n");
+}
+hook_empty_gun(){
+  printw("NO AMO!\n");
 }

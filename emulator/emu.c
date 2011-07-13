@@ -32,9 +32,39 @@ struct option{
 
 struct option optlist[] = {
 	{init,    32, "Init GUN"},
-	{shoot,   2,  "Shoot from GUN"},
-	{ovr_hitting, 3,  "Hitting from Player"},
+	{shoot,   97,  "Shoot from GUN"},
+	{ovr_hitting, 115,  "Hitting from Player"},
 };
+
+char* keynumtochar(int key)
+{
+  char result;
+  switch(key){
+    case 32:  return "space";
+    case 97:  return "a";
+    case 98:  return "b";
+    case 99:  return "c";
+    case 100:  return "d";
+    case 101:  return "e";
+    case 102:  return "f";
+    case 103:  return "g";
+    case 104:  return "h";
+    case 105:  return "i";
+    case 106:  return "j";
+    case 107:  return "k";
+    case 108:  return "l";
+    case 109:  return "m";
+    case 110:  return "n";
+    case 111:  return "o";
+    case 112:  return "p";
+    case 113:  return "q";
+    case 114:  return "r";
+    case 115:  return "s";
+    case 116:  return "t";
+  }
+
+  return NULL;
+}
 
 WINDOW *create_newwin(int height, int width, int starty, int startx)
 {	WINDOW *local_win;
@@ -75,7 +105,11 @@ int HelpWindow()
 	for(i=0;i<optsize;i++){
 		struct option *o=&optlist[i];
   	wmove(w_help,i+1,3);
-		wprintw(w_help, "%i -- %s", o->key, o->descript);
+    char* keychar = keynumtochar(o->key);
+    if(keychar!=NULL)
+      wprintw(w_help, "%s -- %s", keychar, o->descript);
+    else
+      wprintw(w_help, "%i -- %s", o->key , o->descript);
 	}
   
   wrefresh(w_help);
@@ -86,7 +120,7 @@ int HelpWindow()
 
 WINDOW *w_status;
 
-void StatusWindow(int line)
+int StatusWindow(int line)
 {
   int L,C;
 	int i;
@@ -119,6 +153,7 @@ void StatusWindow(int line)
   
   wrefresh(w_status);
   delwin(w_status);
+  return WL;
 }
 
 void InitIt()
@@ -151,18 +186,29 @@ int main(void)
 {
 
   InitIt();
+  
+  //WINDOW *w_log;
   while(true)
   {
-    int line = HelpWindow();
-    StatusWindow(line);
+    int line;
+    line = HelpWindow();
+    line = StatusWindow(line);
     int kcode=getch();
-
-    switch(kcode){
-      case 32: init();
-               break;
-      case 3: goto ExitProg; // Ctrl+C on raw mode
-      default:
-              printw("It key(code:%i) don't support, sorry\n", kcode);
+  
+	  int optsize = sizeof(optlist)/sizeof(struct option);
+    int keydecode=0;
+    while(optsize--!=0){
+      if(kcode == optlist[optsize].key){
+        printw("%s...\n", optlist[optsize].descript);
+        optlist[optsize].func(NULL);
+        keydecode=1;
+      }
+    }
+    if(!keydecode){
+      if(kcode == 3)
+        goto ExitProg; // Ctrl+C on raw mode
+      else
+        printw("It key(code:%i) don't support, sorry\n", kcode);
     }
     refresh();
   }
