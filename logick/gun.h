@@ -36,3 +36,4 @@ int hitting(int group, int pid, int power, int loc);
 /* HOOKS -- need realizate in out logick */
 int hook_you_dead();
 int hook_empty_gun();
+int hitstat_clean();

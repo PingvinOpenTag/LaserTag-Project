@@ -5,6 +5,12 @@
 
 /*! Hitting overlay
  */
+int ovr_hitstatclear(void *arg){
+  hitstat_clean();
+	return 0;
+}
+/*! Hitting overlay
+ */
 int ovr_hitting(void *arg){
   hitting(0,0,1,0);
 	return 0;
@@ -34,6 +40,7 @@ struct option optlist[] = {
 	{init,    32, "Init GUN"},
 	{shoot,   97,  "Shoot from GUN"},
 	{ovr_hitting, 115,  "Hitting from Player"},
+	{ovr_hitstatclear, 100,  "Clear status"},
 };
 
 char* keynumtochar(int key)
@@ -119,6 +126,7 @@ int HelpWindow()
 }
 
 WINDOW *w_status;
+extern int hitstat_cur;
 
 int StatusWindow(int line)
 {
@@ -150,7 +158,10 @@ int StatusWindow(int line)
     MSG(health);
     MSG(life);
 #undef MSG
-  
+  wmove(w_status,i++,3);
+	wprintw(w_status, "statru -- %i", hitstat_cur);
+
+
   wrefresh(w_status);
   delwin(w_status);
   return WL;

@@ -19,14 +19,34 @@
 #include <hardware.h>
 #include "gun.h"
 
+// FIXME -- move it for hell
+#define HITSIZE 10
+
 struct T_gun_status gun_status;
 
+struct T_hitting{
+  uint64_t time;
+  int group;
+  int pid;
+  int power;
+  int loc;
+};
+
+struct T_hitting hitstat[HITSIZE];
+
+int hitstat_cur;
 /*! Default init 
  */
 
+int hitstat_clean()
+{
+  hitstat_cur=0;
+  return 0;
+}
+
 int init(){
 	gun_status.amons=100;
-	gun_status.health=10;
+	gun_status.health=100;
   gun_status.life=1;
 	switch_to_life();
 	return 0;
@@ -64,6 +84,16 @@ int hitting(int group, int pid, int power, int loc)
     gun_status.life=0;
 		switch_to_dead();
 	}
+  if(hitstat_cur<HITSIZE){
+    hitstat[hitstat_cur].time=0;
+    hitstat[hitstat_cur].group=group;
+    hitstat[hitstat_cur].pid=pid;
+    hitstat[hitstat_cur].power=power;
+    hitstat[hitstat_cur].loc=loc;
+    hitstat_cur++;
+  }else{
+    hook_hitstat_overflow();
+  }
 
 	return 0;
 }

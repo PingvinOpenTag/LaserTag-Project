@@ -55,3 +55,7 @@ hook_you_dead(){
 hook_empty_gun(){
   printw("NO AMO!\n");
 }
+
+hook_hitstat_overflow(){
+  printw("HIT STAT overflow\n");
+}
