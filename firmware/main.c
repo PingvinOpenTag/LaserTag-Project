@@ -70,6 +70,12 @@ USB_PUBLIC uchar usbFunctionSetup(uchar data[8])
 #define DELAYBIT	 _delay_us(50)
 #define MAX_DELAY  0xff
 
+/*
+ * Parsing IR channel
+ * support function.
+ *
+ * Get package lenght of "0" or "1".
+ */
 uint16_t count_bit(uint8_t type, uint8_t trigger)
 {
 	uint16_t count=0;
@@ -94,31 +100,13 @@ bad_work:
 	return count;
 } 
 
-int i=0;
-int main(void)
+/*
+ * Parsing IR channel
+ */
+int ir_parse()
 {
-    wdt_disable();
-    
-    DDRB=0xFD;
-		PORTB=0xFF;
-    DDRC=0xFF;
-    PORTC=0;
-   
-   // USB INIT /////////
-    cli();
-    usbInit();
-    usbDeviceDisconnect();
-//    while(--i){
-        _delay_ms(1000);
-//    }
-    usbDeviceConnect();
-    sei();
-   //// END USB INIT /// 
-    for(;;){    /* main event loop */
-			time++;
-			usbPoll();
-
 			char res = IRBYTE1; 
+      BIT(D, 6, res);
   		if((res == 1)){//
 				uint16_t head_nuls;
 				uint16_t head_ones=0;
@@ -175,7 +163,40 @@ int main(void)
 			}
 			write+=bytenum/8+!(!(bytenum%8));
 		 }
-		}
+  return 0;
+}
+
+
+int i=0;
+int main(void)
+{
+    wdt_disable();
+    
+    DDRB=0xFD;
+		PORTB=0xFF;
+    DDRC=0xFF;
+    PORTC=0;
+   
+   // USB INIT /////////
+    cli();
+    usbInit();
+    usbDeviceDisconnect();
+//    while(--i){
+        _delay_ms(1000);
+//    }
+    usbDeviceConnect();
+    sei();
+   //// END USB INIT /// 
+    for(;;){    /* main event loop */
+			time++;
+			usbPoll();
+
+
+    //  _delay_ms(1000);
+    //  BIT(B, 2, time%2);
+
+      ir_parse();
+    }
     return 0;
 }
 
