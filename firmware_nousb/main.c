@@ -142,10 +142,9 @@ int main(void)
    //// END USB INIT /// 
     for(;;){    /* main event loop */
 			time++;
-
-      _delay_us(26);
+      // software IR "1". FIXME need using PWM!!!
+      _delay_us(27); // ~ 36 kHZ
       BIT(B, 2, time%2);
-
     }
     return 0;
 }
