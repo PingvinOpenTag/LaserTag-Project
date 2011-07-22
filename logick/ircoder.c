@@ -19,7 +19,7 @@
 
 int code2ir_shot(uint8_t *code, uint8_t *result, int size_of_bites)
 {
-  int i,x,y;
+  int x,y;
   *((uint64_t*)result)=y=0;
   result[0]=0xe0;// 1110 0000 -- HEADER
   x=4;
