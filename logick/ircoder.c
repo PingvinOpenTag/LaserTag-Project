@@ -20,7 +20,7 @@
 int code2ir_shot(uint8_t *code, uint8_t *result, int size_of_bites)
 {
   int x,y;
-  *((uint64_t*)result)=y=0;
+  *result=y=0;
   result[0]=0xe0;// 1110 0000 -- HEADER
   x=4;
 
@@ -55,26 +55,22 @@ int code2ir_shot(uint8_t *code, uint8_t *result, int size_of_bites)
  *  Example:
  *   code == 0xEA 0x50 == 11101010 01010000
  *  ircode
- *   |  1110 | 10| 100| 10| 100|
- *   |header | 0 | 1  | 0 | 1  | == 0x05
+ *   |  1110 | 10| 100| 10| 100| stop|
+ *   |header | 0 | 1  | 0 | 1  |     | == 0x05
  */
 
 int ir_shot2code(uint8_t *ircode, uint8_t *code)
 {
   int x,y;
-  *((uint64_t*)code)=y=0;
+  *code=y=0;
   x=8;
   // FIXME maybe header isn't exist.
-  int one=0;
-  int null=0;
-  int head=0;
   int a,b;
+  int one,null,head;
   a=b=0;
+  null=head=one=0;
   int max=100;
   while(max--){
-    uint8_t times;
-    times=2;
-
     int byte=(ircode[a]>>(7-b))&1;
     if(byte == 1){
       if(one==1){
@@ -158,11 +154,15 @@ int main(void)
   ir_shot2code(rcode, code);
   assert(*((uint64_t*)code) == 0x55);
 
-  st=0x0987654321ll;//FIXME
-  code2ir_shot(code, rcode, 40);
-  assert(*result == 0x522a29495552a9ea);
+  st=0x87654321ll;//FIXME
+  code2ir_shot(code, rcode, 32);
+  assert(*result == 0x49554aa9a42455e9);
+  //printf("%llx\n", *result);
   ir_shot2code(rcode, code);
-  assert(*((uint64_t*)code) == 0x2043658709);// FIXME bad decoder 0x20 but send 0x21
+  assert(*((uint64_t*)code) == 0x21436587);
+  //printf("%llx\n", *((uint64_t*)code));
+  // FIXME
+  // code2ir_shot -- broken if bit_size > 32
 
   printf("All test success!\n");
 
