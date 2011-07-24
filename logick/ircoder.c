@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
-
+#include "ircoder.h"
 /*
  * Convert real code to IR sequence
  *
