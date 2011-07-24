@@ -14,6 +14,10 @@
 #include <avr/pgmspace.h>
 #include <avr/eeprom.h>
 
+#include <avr/power.h>
+
+#include "../logick/ircoder.h"
+
 #define DDRBIT(port, num, s) DDR##port=((DDR##port & (~(1<<num))) | ((s?1:0)<<num));
 #define BIT(port, num, s) PORT##port=((PORT##port & (~(1<<num))) | ((s?1:0)<<num));
 #define SETBIT(port, num, s) port=((port & (~(1<<num))) | ((s?1:0)<<num));
@@ -25,6 +29,16 @@ uint32_t time=0;
 #define IRBYTE1    !(PINB&2)
 #define DELAYBIT	 _delay_us(50)
 #define MAX_DELAY  0xff
+
+// GOOD
+#define T0_ON()  TCCR0B=0x0a;
+#define T0_OFF() TCCR0B=0x00;
+// BAD
+//#define T0_ON()   DDRBIT(D, 6, 0)
+//#define T0_OFF()  DDRBIT(D, 6, 1)
+// BAD
+//#define T0_ON()  power_timer0_enable()
+//#define T0_OFF() power_timer0_disable()
 
 /*
  * Parsing IR channel
@@ -134,18 +148,76 @@ int main(void)
     DDRC=0xFF;
     PORTC=0;
     DDRBIT(D, 6, 1);//=0xFD;
+    DDRBIT(D, 5, 1);//=0xFD;
+
+    //// 8 bit timer programming....
+    // Diver 8 (20000 kHZ / 8 => 2500 kHz)
+    //  needed 36 kHz.
+    // 2500 / 36.0 => 69.444 (0x45)
+    //
+    // TCCR0A
+    //  7 - COMOA1
+    //  6 - COMOA0
+    //  5 - COMOB1
+    //  4 - COMOB0
+    //  3,2
+    //  1 - WGMO1
+    //  0 - WGMO0
+    // 0b000100
+    
+    // for TCCR0A --
+    // 0b01000011 -- TIMER 0 (OC0A in toggle mode), TIMER 1 is off 
+    //         ||- WGM00 == 1 -- it needed ;-)
+    //         |- WGM01 == 0 TOP <-> BOTTOM
+    //                     1 BOTTOM <-> TOP
+    // for
+    //         | WGM02 == 1 -- its toggle OC0A it comapre match
+    //
+    //
+    // // DDR must be set (its set)
+    //*
+    TCCR0A=0x43;
+    //TCCR0B
+    // 0b??--1101
+    //   ||   | 010 -- clk/8
+    //   ||   \ 101 -- clk/1024
+    //   ||FOC0B
+    //   |FOC0A
+    TCCR0B=0x0a;//0b00001010
+    TIMSK0=0x00;//no needed interrupt
+    OCR0A=0x29;
+    power_timer0_enable();
+    //*/
    
-   // USB INIT /////////
     sei();
     BIT(B, 2, 1);
-    _delay_ms(3000);
-   //// END USB INIT /// 
+   uint8_t msg[8];
+   uint32_t st;
+   uint8_t  *code   = (uint8_t*)  &st;
+   st=0xbeef;
+   code2ir_shot(code, msg, 16);
+
+   uint8_t a=0;
+   uint8_t c=7;
     for(;;){    /* main event loop */
 			time++;
-      // software IR "1". FIXME need using PWM!!!
-      _delay_us(27); // ~ 36 kHZ
-      BIT(B, 2, time%2);
+
+      if((msg[a]>>c)&1){
+        T0_ON();
+      }else{
+        T0_OFF();
+      }
+      _delay_us(600);
+      if(c--==0){
+        if(++a>=7){
+          a=0;
+          T0_OFF();
+          _delay_ms(100);
+        }
+        c=7;
+      }//*/
     }
     return 0;
 }
+
 

@@ -7,7 +7,8 @@ AVRDUDE = avrdude -c ${TYPEPROG} -p m168
 #COMPILE = avr-gcc -save-temps -Wall -Os -Iusbdrv -I. -mmcu=$(DEVICE)  -L/usr/x86_64-pc-linux-gnu/avr/lib #-DDEBUG_LEVEL=2
 #COMPILE = avr-gcc -save-temps -Os -Wall -Iusbdrv -I. -mmcu=$(DEVICE)  
 COMPILE = avr-gcc -Os -Wall -I. -I${USB_CMD_DIR} -mmcu=$(DEVICE)  
-OBJECTS = main.o 
+#COMPILE = avr-gcc -Os -Wall -I. -I${USB_CMD_DIR} -mmcu=$(DEVICE)  
+OBJECTS = main.o logick.o
 
 # symbolic targets:
 all: config.make main.hex
@@ -19,6 +20,9 @@ config.make:
 	@echo "#TYPEPROG=siprog -P /dev/ttyS1"       >> config.make
 	@echo "I CREATE config.make file, please FIX IT and rerun me again!"
 	false
+
+logick.o:
+	$(COMPILE) -c ../logick/ircoder.c -o $@
 
 .c.o:
 	$(COMPILE) -c $< -o $@
