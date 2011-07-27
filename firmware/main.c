@@ -176,6 +176,7 @@ int main(void)
 		PORTB=0xFF;
     DDRC=0xFF;
     PORTC=0;
+    DDRBIT(D, 6, 1);//=0xFD;
    
    // USB INIT /////////
     cli();
@@ -186,16 +187,17 @@ int main(void)
 //    }
     usbDeviceConnect();
     sei();
+    BIT(B, 2, 1);
+    _delay_ms(3000);
    //// END USB INIT /// 
     for(;;){    /* main event loop */
 			time++;
-			usbPoll();
+		 // usbPoll();
 
+      _delay_us(127);
+      BIT(B, 2, time%2);
 
-    //  _delay_ms(1000);
-    //  BIT(B, 2, time%2);
-
-      ir_parse();
+      //ir_parse();
     }
     return 0;
 }

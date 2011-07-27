@@ -31,14 +31,16 @@ uint32_t time=0;
 #define MAX_DELAY  0xff
 
 // GOOD
+/*
 #define T0_ON()  TCCR0B=0x0a;
 #define T0_OFF() TCCR0B=0x00;
+*/
 // BAD
 //#define T0_ON()   DDRBIT(D, 6, 0)
 //#define T0_OFF()  DDRBIT(D, 6, 1)
 // BAD
-//#define T0_ON()  power_timer0_enable()
-//#define T0_OFF() power_timer0_disable()
+#define T0_ON()  power_timer0_enable()
+#define T0_OFF() power_timer0_disable()
 
 /*
  * Parsing IR channel
@@ -185,7 +187,7 @@ int main(void)
     //   |FOC0A
     TCCR0B=0x0a;//0b00001010
     TIMSK0=0x00;//no needed interrupt
-    OCR0A=0x29;
+    OCR0A=20;//0x29;
     power_timer0_enable();
     //*/
    
@@ -212,7 +214,9 @@ int main(void)
         if(++a>=7){
           a=0;
           T0_OFF();
+          power_timer0_disable();
           _delay_ms(100);
+          power_timer0_enable();
         }
         c=7;
       }//*/
