@@ -8,7 +8,7 @@ AVRDUDE = avrdude -c ${TYPEPROG} -p m168
 #COMPILE = avr-gcc -save-temps -Os -Wall -Iusbdrv -I. -mmcu=$(DEVICE)  
 COMPILE = avr-gcc -Os -Wall -I. -I${USB_CMD_DIR} -mmcu=$(DEVICE)  
 #COMPILE = avr-gcc -Os -Wall -I. -I${USB_CMD_DIR} -mmcu=$(DEVICE)  
-OBJECTS = main.o logick.o
+OBJECTS = main.o timer.o logick.o
 
 # symbolic targets:
 all: config.make main.hex
@@ -42,6 +42,9 @@ flash:	all
 
 k:	all
 	$(AVRDUDE)
+
+dis:
+	avr-objdump -D main.bin| less
 
 
 # Fuse low byte:
