@@ -22,34 +22,22 @@
 #include "support.h"
 #include "timer.h"
 
-uint8_t send_msg[8];
-uint8_t send_itr=8;
-uint8_t send_bititr=8;
+#include "sender.h"
 
 // INTERRUPTS!
-//ISR(TIMER2_COMPA_vect, ISR_NAKED) // XXX: NAKED
-ISR(TIMER2_COMPA_vect ) // XXX: NAKED
+ISR(TIMER2_COMPA_vect )
 {
   static char aa=0;
   TIFR2=0;
   TCNT2=0;
   aa++;
-  
+
   BIT(B, 0,  aa    &1);
   BIT(B, 4, (aa>>1)&1);
   BIT(B, 3, (aa>>2)&1);
- // _delay_us(50);
-  if(send_itr<8){
-    if((send_msg[send_itr]>>send_bititr)&1){
-        T0_ON();
-    }else{
-        T0_OFF();
-    }
 
-    if(send_bititr--==0){
-      send_itr++;
-      send_bititr=7;
-    }
+  if(aa&1){ // division by 2.
+    send_iteration();
   }
 
 }
@@ -180,24 +168,17 @@ int main(void)
    st=0x3b0a;
    uint8_t msg[8];
    uint8_t  *code   = (uint8_t*)  &st;
+   //send_set_message()
    code2ir_shot(code, msg, 16);
    /// CODER
  //   return 0;
     do{
       cli();
-      if(send_itr>=8){
+      if(send_is_freely()==0){
         sei();
         _delay_ms(1000);
         cli();
-        send_msg[0]=msg[0];
-        send_msg[1]=msg[1];
-        send_msg[2]=msg[2];
-        send_msg[3]=msg[3];
-        send_msg[4]=msg[4];
-        send_msg[5]=msg[5];
-        send_msg[6]=msg[6];
-        send_msg[7]=msg[7];
-        send_itr=0;
+        send_set_message(msg, 8);
       }
       BIT(B, 5, b++&1);
       sei();
