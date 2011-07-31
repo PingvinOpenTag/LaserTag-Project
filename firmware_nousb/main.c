@@ -23,21 +23,7 @@
 #include "timer.h"
 
 #include "sender.h"
-
-uint8_t recv[2*8]; // 2 -- bytes on messag; 8 -- IR sensors
-uint8_t cur_bit[8];
-
-uint8_t recv_mask[2];
-
-enum{
-  CUR_NONE,
-  CUR_ONES,
-  CUR_ZERO
-};
-
-uint8_t curstate[8];//CUR_NONE;
-uint8_t curones[8];
-uint8_t curzeros[8];
+#include "reciver.h"
 
 // INTERRUPTS!
 ISR(TIMER2_COMPA_vect )
@@ -47,104 +33,12 @@ ISR(TIMER2_COMPA_vect )
   TCNT2=0;
   aa++;
 
-  if(!(aa%4)){ // division by 2.
+  // XXX: don't change "4", revicer using many constants for
+  //  valid work.
+  if(!(aa%4)){ // division by 4.
     send_iteration();
   }
-  //  BIT(D, 6,  aa    &1);
-  //  BIT(B, 4, (aa>>1)&1);
-    uint8_t i;
-    PORTB=(PORTB & (~(7<<1))) | (0<<1);
-
-    for(i=0;i<8;i++){
-    //i=0;
-
-        char bit;
-        PORTB=((PORTB & (~(7<<1))) | (i<<1));
-        //_delay_us(10);
-        //bit=!((PINB>>5)&1);
-        bit=!((PINB>>5)&1);
-        switch(curstate[i]){
-          case CUR_NONE:
-            if(bit==1){
-              curones[i]=1;
-              curzeros[i]=0;
-              curstate[i]=CUR_ONES;
-              cur_bit[i]=0; // it is a new message
-              // whitout start bit. If star bit exist,
-              // see below.
-            }
-            break;
-          case CUR_ONES:
-            if(bit==0){
-              if(curones[i]>=9){// it is a START bit (1110). We need drop first bit (zero bit)
-                curstate[i]=CUR_NONE; // Drop first bit.
-                recv[i*2]=0;
-                recv[i*2+1]=0;
-              }else{
-                curzeros[i]=1;
-                curstate[i]=CUR_ZERO;
-              }
-            }else{
-              curones[i]++;
-            }
-            break;
-          case CUR_ZERO:
-            if(bit==1){
-              if(cur_bit[i]>=16){
-                // BIT(B, 0, 1);
-                //false
-              }else{
-                if(curzeros[i]>=7){
-                  BIT(B, 4, 1);
-                  if(cur_bit[i]<8){
-                    recv[i*2]   |= (1<<(7 -cur_bit[i]));
-                  }else{
-                    recv[i*2+1] |= (1<<(15-cur_bit[i]));
-                  }
-                }else{
-                  BIT(B, 4, 0);
-                }
-                cur_bit[i]++;
-              }
-              curzeros[i]=0;
-              curones[i]=1;
-              curstate[i]=CUR_ONES;
-            }else{
-              curzeros[i]++;
-              if(curzeros[i]>15){
-                cur_bit[i]=16;
-                curstate[i]=CUR_NONE;
-              }
-#if 1 // for debug
-              if(curzeros[i]>15){
-                BIT(B, 0, 0);
-                BIT(B, 0, 1);
-                BIT(B, 0, 0);
-                BIT(B, 0, 1);
-                uint8_t x;
-                for(x=0;x<8;x++){
-                  BIT(B, 4, 0);
-                  uint8_t b = (recv[i*2]>>(7-x))&1;
-                  //uint8_t b = (0x55>>(7-x))&1;
-                  BIT(B, 0, b);
-                  BIT(B, 4, 1);
-                }
-                BIT(B, 0, 0);
-                BIT(B, 0, 1);
-                BIT(B, 0, 0);
-                BIT(B, 0, 1); 
-                for(x=0;x<8;x++){
-                  BIT(B, 4, 0);
-                  uint8_t b = (recv[i*2+1]>>(7-x))&1;
-                  BIT(B, 0, b);
-                  BIT(B, 4, 1);
-                }
-              }
-#endif
-            }
-            break;
-        }
-    }
+  recv_iteration();
 }
 
 //////////////////////////////
@@ -160,20 +54,8 @@ int main(void)
 
     // 200-600 us -- FIXME need nomral name for this function.
     frame_timer_load();
-    curstate[0]=CUR_NONE;
-    curstate[1]=CUR_NONE;
-    curstate[2]=CUR_NONE;
-    curstate[3]=CUR_NONE;
-    curstate[4]=CUR_NONE;
-    curstate[5]=CUR_NONE;
-    curstate[6]=CUR_NONE;
-    curstate[7]=CUR_NONE;
-    recv_mask[0]=0;
-    recv_mask[1]=0;
+    recv_initialize();
 
-    
-    DDRBIT(B, 5, 0);
-    //char b=0;
    /// CODER (user, gid, gun, CRC)
    //         00111 011  0000 1010
    uint32_t st;
@@ -181,10 +63,9 @@ int main(void)
    uint8_t msg[8];
    msg[3]=msg[4]=msg[5]=msg[6]=msg[7]=0;
    uint8_t  *code   = (uint8_t*)  &st;
-   //send_set_message()
+
    code2ir_shot(code, msg, 16);
    /// CODER
- //   return 0;
     sei();
     do{
       cli();
@@ -194,9 +75,7 @@ int main(void)
         cli();
         send_set_message(msg, 8);
       }
-      //BIT(B, 5, b++&1);
       sei();
-      //asm(      " sbr 
     }while(1);
     return 0;
 }
