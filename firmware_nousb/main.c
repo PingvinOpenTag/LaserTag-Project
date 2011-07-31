@@ -25,7 +25,7 @@
 #include "sender.h"
 
 uint8_t recv[2*8]; // 2 -- bytes on messag; 8 -- IR sensors
-uint8_t cur_bit=0;
+uint8_t cur_bit[8];
 
 enum{
   CUR_NONE,
@@ -33,9 +33,9 @@ enum{
   CUR_ZERO
 };
 
-uint8_t curstate=CUR_NONE;
-uint8_t curones;
-uint8_t curzeros;
+uint8_t curstate[8];//CUR_NONE;
+uint8_t curones[8];
+uint8_t curzeros[8];
 
 // INTERRUPTS!
 ISR(TIMER2_COMPA_vect )
@@ -50,48 +50,70 @@ ISR(TIMER2_COMPA_vect )
   }
   //  BIT(D, 6,  aa    &1);
   //  BIT(B, 4, (aa>>1)&1);
-    char i;
+    uint8_t i;
     PORTB=(PORTB & (~(7<<1))) | (0<<1);
 
-    //for(i=0;i<8;i++){
-    i=0;
+    for(i=0;i<8;i++){
+    //i=0;
 
         char bit;
         PORTB=((PORTB & (~(7<<1))) | (i<<1));
         //_delay_us(10);
         //bit=!((PINB>>5)&1);
         bit=!((PINB>>5)&1);
-        switch(curstate){
+        switch(curstate[i]){
           case CUR_NONE:
             if(bit==1){
-              curones=1;
-              curzeros=0;
-              curstate=CUR_ONES;
+              curones[i]=1;
+              curzeros[i]=0;
+              curstate[i]=CUR_ONES;
             }
             break;
           case CUR_ONES:
             if(bit==0){
-              curzeros=1;
-              curstate=CUR_ZERO;
+              curzeros[i]=1;
+              curstate[i]=CUR_ZERO;
             }else{
-              curones++;
+              curones[i]++;
+              if(curones>=9){
+                BIT(B, 0, 1);
+                cur_bit[i]=0;
+                recv[i*2]=0;
+                recv[i*2+1]=0;
+              }
             }
             break;
           case CUR_ZERO:
             if(bit==1){
-              if(curzeros>=7){
-                BIT(B, 0, 1);
+              if(cur_bit[i]>=16){
+                // BIT(B, 0, 1);
+                //false
               }else{
+                if(curzeros[i]>=7){
+                 // BIT(B, 0, 1);
+                  if(cur_bit[i]<8){
+                    recv[i*2]   |= (1<<(7 -cur_bit[i]));
+                  }else{
+                    recv[i*2+1] |= (1<<(15-cur_bit[i]));
+                  }
+                }else{
+                 // BIT(B, 0, 0);
+                }
+                cur_bit[i]++;
+              }
+              curzeros[i]=0;
+              curones[i]=1;
+              curstate[i]=CUR_ONES;
+            }else{
+              curzeros[i]++;
+              if(curzeros[i]>15){
+                cur_bit[i]=16;
                 BIT(B, 0, 0);
               }
-              curzeros=1;
-              curones=0;
-              curstate=CUR_ONES;
-            }else{
-              curzeros++;
             }
             break;
         }
+    }
    //*/
 
   BIT(B, 4,  aa    &1);
@@ -212,6 +234,14 @@ int main(void)
 
     // 200-600 us -- FIXME need nomral name for this function.
     frame_timer_load();
+    curstate[0]=CUR_NONE;
+    curstate[1]=CUR_NONE;
+    curstate[2]=CUR_NONE;
+    curstate[3]=CUR_NONE;
+    curstate[4]=CUR_NONE;
+    curstate[5]=CUR_NONE;
+    curstate[6]=CUR_NONE;
+    curstate[7]=CUR_NONE;
 
     
     DDRBIT(B, 5, 0);
@@ -221,6 +251,7 @@ int main(void)
    uint32_t st;
    st=0x3b0a;
    uint8_t msg[8];
+   msg[3]=msg[4]=msg[5]=msg[6]=msg[7]=0;
    uint8_t  *code   = (uint8_t*)  &st;
    //send_set_message()
    code2ir_shot(code, msg, 16);
