@@ -23,11 +23,12 @@ int frame_timer_load()
 
     // 12 000 000 / 1024 / 2dc6 == 1 Hz
     TCCR2B=0x00;
-    OCR2A=0x70;
+    //OCR2A=0x70;
+    OCR2A=0xe0;
 
     TCCR2A=0x02;
     TIMSK2=0x02;//COMPARE A
-    TCCR2B=0x03;
+    TCCR2B=0x02;
     //TCCR0B
     // 0b??--1101
     //   ||   | 010 -- clk/8

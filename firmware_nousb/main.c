@@ -24,6 +24,19 @@
 
 #include "sender.h"
 
+uint8_t recv[2*8]; // 2 -- bytes on messag; 8 -- IR sensors
+uint8_t cur_bit=0;
+
+enum{
+  CUR_NONE,
+  CUR_ONES,
+  CUR_ZERO
+};
+
+uint8_t curstate=CUR_NONE;
+uint8_t curones;
+uint8_t curzeros;
+
 // INTERRUPTS!
 ISR(TIMER2_COMPA_vect )
 {
@@ -32,16 +45,57 @@ ISR(TIMER2_COMPA_vect )
   TCNT2=0;
   aa++;
 
-  BIT(B, 0,  aa    &1);
-  BIT(B, 4, (aa>>1)&1);
-  BIT(B, 3, (aa>>2)&1);
-
-  if(aa&1){ // division by 2.
+  if(!(aa%4)){ // division by 2.
     send_iteration();
   }
+  //  BIT(D, 6,  aa    &1);
+  //  BIT(B, 4, (aa>>1)&1);
+    char i;
+    PORTB=(PORTB & (~(7<<1))) | (0<<1);
 
+    //for(i=0;i<8;i++){
+    i=0;
+
+        char bit;
+        PORTB=((PORTB & (~(7<<1))) | (i<<1));
+        //_delay_us(10);
+        //bit=!((PINB>>5)&1);
+        bit=!((PINB>>5)&1);
+        switch(curstate){
+          case CUR_NONE:
+            if(bit==1){
+              curones=1;
+              curzeros=0;
+              curstate=CUR_ONES;
+            }
+            break;
+          case CUR_ONES:
+            if(bit==0){
+              curzeros=1;
+              curstate=CUR_ZERO;
+            }else{
+              curones++;
+            }
+            break;
+          case CUR_ZERO:
+            if(bit==1){
+              if(curzeros>=7){
+                BIT(B, 0, 1);
+              }else{
+                BIT(B, 0, 0);
+              }
+              curzeros=1;
+              curones=0;
+              curstate=CUR_ONES;
+            }else{
+              curzeros++;
+            }
+            break;
+        }
+   //*/
+
+  BIT(B, 4,  aa    &1);
 }
-
 
 //////////////////////////////
 
@@ -159,8 +213,8 @@ int main(void)
     // 200-600 us -- FIXME need nomral name for this function.
     frame_timer_load();
 
-    sei();
-
+    
+    DDRBIT(B, 5, 0);
     char b=0;
    /// CODER (user, gid, gun, CRC)
    //         00111 011  0000 1010
@@ -172,6 +226,7 @@ int main(void)
    code2ir_shot(code, msg, 16);
    /// CODER
  //   return 0;
+    sei();
     do{
       cli();
       if(send_is_freely()==0){
@@ -180,7 +235,7 @@ int main(void)
         cli();
         send_set_message(msg, 8);
       }
-      BIT(B, 5, b++&1);
+      //BIT(B, 5, b++&1);
       sei();
       //asm(      " sbr 
     }while(1);
