@@ -27,6 +27,8 @@
 uint8_t recv[2*8]; // 2 -- bytes on messag; 8 -- IR sensors
 uint8_t cur_bit[8];
 
+uint8_t recv_mask[2];
+
 enum{
   CUR_NONE,
   CUR_ONES,
@@ -67,20 +69,23 @@ ISR(TIMER2_COMPA_vect )
               curones[i]=1;
               curzeros[i]=0;
               curstate[i]=CUR_ONES;
+              cur_bit[i]=0; // it is a new message
+              // whitout start bit. If star bit exist,
+              // see below.
             }
             break;
           case CUR_ONES:
             if(bit==0){
-              curzeros[i]=1;
-              curstate[i]=CUR_ZERO;
-            }else{
-              curones[i]++;
-              if(curones>=9){
-                BIT(B, 0, 1);
-                cur_bit[i]=0;
+              if(curones[i]>=9){// it is a START bit (1110). We need drop first bit (zero bit)
+                curstate[i]=CUR_NONE; // Drop first bit.
                 recv[i*2]=0;
                 recv[i*2+1]=0;
+              }else{
+                curzeros[i]=1;
+                curstate[i]=CUR_ZERO;
               }
+            }else{
+              curones[i]++;
             }
             break;
           case CUR_ZERO:
@@ -90,14 +95,14 @@ ISR(TIMER2_COMPA_vect )
                 //false
               }else{
                 if(curzeros[i]>=7){
-                 // BIT(B, 0, 1);
+                  BIT(B, 4, 1);
                   if(cur_bit[i]<8){
                     recv[i*2]   |= (1<<(7 -cur_bit[i]));
                   }else{
                     recv[i*2+1] |= (1<<(15-cur_bit[i]));
                   }
                 }else{
-                 // BIT(B, 0, 0);
+                  BIT(B, 4, 0);
                 }
                 cur_bit[i]++;
               }
@@ -108,15 +113,38 @@ ISR(TIMER2_COMPA_vect )
               curzeros[i]++;
               if(curzeros[i]>15){
                 cur_bit[i]=16;
-                BIT(B, 0, 0);
+                curstate[i]=CUR_NONE;
               }
+#if 1 // for debug
+              if(curzeros[i]>15){
+                BIT(B, 0, 0);
+                BIT(B, 0, 1);
+                BIT(B, 0, 0);
+                BIT(B, 0, 1);
+                uint8_t x;
+                for(x=0;x<8;x++){
+                  BIT(B, 4, 0);
+                  uint8_t b = (recv[i*2]>>(7-x))&1;
+                  //uint8_t b = (0x55>>(7-x))&1;
+                  BIT(B, 0, b);
+                  BIT(B, 4, 1);
+                }
+                BIT(B, 0, 0);
+                BIT(B, 0, 1);
+                BIT(B, 0, 0);
+                BIT(B, 0, 1); 
+                for(x=0;x<8;x++){
+                  BIT(B, 4, 0);
+                  uint8_t b = (recv[i*2+1]>>(7-x))&1;
+                  BIT(B, 0, b);
+                  BIT(B, 4, 1);
+                }
+              }
+#endif
             }
             break;
         }
     }
-   //*/
-
-  BIT(B, 4,  aa    &1);
 }
 
 //////////////////////////////
@@ -242,10 +270,12 @@ int main(void)
     curstate[5]=CUR_NONE;
     curstate[6]=CUR_NONE;
     curstate[7]=CUR_NONE;
+    recv_mask[0]=0;
+    recv_mask[1]=0;
 
     
     DDRBIT(B, 5, 0);
-    char b=0;
+    //char b=0;
    /// CODER (user, gid, gun, CRC)
    //         00111 011  0000 1010
    uint32_t st;
