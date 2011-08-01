@@ -20,6 +20,6 @@
 	#include "main.h"
 	#define __UTILS_H__
 	#ifdef WIN32
-		void redirect_stdio(void)
+		void redirect_stdio(void);
 	#endif
 #endif
