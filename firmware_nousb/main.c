@@ -72,7 +72,7 @@ ISR(TIMER2_COMPA_vect )
   aa++;
 
   if(audi){
-    if(aa==0){
+    if((aa%60)==0){
       audi--;
     }
     BIT(C, 3, (aa>>bb++)&1);
@@ -138,13 +138,31 @@ int main(void)
    /// CODER
     sei();
     do{
+      //// Software interrupts
+      // check recv buffer...
+      i=8;
+      while(i--){
+        if((recv_mask[0]>>i)&1){
+          if(recv[i*2]==0x3b){
+            if(recv[i*2+1]==0x0a){
+              cli();
+                audi+=5;
+                recv_mask[0]&=~(1<<i); // drop it bit
+              sei();
+            }
+          }
+        }
+      }
+      ///////////////////////////
+
+
       //led_code(0x00);
       cli();
       if(send_is_freely()==0){
         sei();
         led_code(i++);
         _delay_ms(500);
-        audi=3;
+        //audi=3;
         cli();
         send_set_message(msg, 8);
       }

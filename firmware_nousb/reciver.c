@@ -29,7 +29,7 @@
 uint8_t recv[MSGMAXLEN*SENSORS]; // 2 -- bytes on messag; 8 -- IR sensors
 uint8_t cur_bit[SENSORS];
 
-uint8_t recv_mask[MSGMAXLEN];
+uint8_t recv_mask[SENSORS/8+1];//
 
 enum{
   CUR_NONE,
@@ -69,6 +69,7 @@ int recv_iteration(){
         bit=!((PINB>>5)&1);
         switch(curstate[i]){
           case CUR_NONE:
+            //recv_mask[0]&=~(1<<i);// recv_mask ONLY FOR first 8 bytes!
             if(bit==1){
               curones[i]=1;
               curzeros[i]=0;
@@ -99,14 +100,14 @@ int recv_iteration(){
                 //false
               }else{
                 if(curzeros[i]>=7){
-                  BIT(B, 4, 1);
+                 // BIT(B, 4, 1); // debug
                   if(cur_bit[i]<8){
                     recv[i*2]   |= (1<<(7 -cur_bit[i]));
                   }else{
                     recv[i*2+1] |= (1<<(15-cur_bit[i]));
                   }
                 }else{
-                  BIT(B, 4, 0);
+                 // BIT(B, 4, 0); // debug
                 }
                 cur_bit[i]++;
               }
@@ -118,8 +119,9 @@ int recv_iteration(){
               if(curzeros[i]>15){
                 cur_bit[i]=16;
                 curstate[i]=CUR_NONE;
+                recv_mask[0]|=1<<i;// recv_mask ONLY FOR first 8 bytes!
               }
-#if 1 // for debug
+#if 0 // for debug
               if(curzeros[i]>15){
                 BIT(B, 0, 0);
                 BIT(B, 0, 1);

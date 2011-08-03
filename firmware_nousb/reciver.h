@@ -31,3 +31,4 @@ int recv_initialize();
 #define SENSORS   8
 
 extern uint8_t recv[MSGMAXLEN*SENSORS]; // 2 -- bytes on messag; 8 -- IR sensors
+extern uint8_t recv_mask[MSGMAXLEN];
