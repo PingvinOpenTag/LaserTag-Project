@@ -43,14 +43,42 @@
 #include "sender.h"
 #include "reciver.h"
 
+#include "../logick/gun.h"
+
+//////// HOOKS
+
+
+int hook_you_dead(){
+  return 0;
+}
+int hook_empty_gun(){
+  return 0;
+}
+
+int hook_hitstat_overflow(){
+  return 0;
+}
+
+/////////////////////////
+uint16_t audi=0;
+
 // INTERRUPTS!
 ISR(TIMER2_COMPA_vect )
 {
   static char aa=0;
+  static char bb=0;
   TIFR2=0;
   TCNT2=0;
   aa++;
 
+  if(audi){
+    if((aa%60)==0){
+      audi--;
+    }
+    BIT(C, 3, (aa>>bb++)&1);
+  }
+
+  bb=bb%8;
   // XXX: don't change "4", revicer using many constants for
   //  valid work.
   if(!(aa%4)){ // division by 4.
@@ -58,15 +86,37 @@ ISR(TIMER2_COMPA_vect )
   }
   recv_iteration();
 }
+////////////////////////////////
+        // D3 -- STROBE, D4 -- DATA, D5 -- CLC
+int led_code(uint8_t num)
+{
+  cli(); // FIXME need drop it
+  BIT(D, 3, 0);
+  //_delay_us(1000);
+  int i=8;
+  //for(i=0; i<8;i++){
+  while(i--){
+    BIT(D, 4, (num>>i)&1);
+    BIT(D, 5, 0);
+  sei(); // FIXME need del it
+    _delay_us(5);
+  cli(); // FIXME need del it
+    BIT(D, 5, 1);
+  }
+  BIT(D, 3, 1);
+  sei();
+  return 0;
+}
+
 
 //////////////////////////////
-int i=0;
 int main(void)
 {
     wdt_disable();
     cli();
 
     DDRB=0xff;
+    DDRC=0xff;
     // 36 kHz -- FIXME need normal name for this function.
     timer_load();//it used PORTD -- BIT 6
 
@@ -83,13 +133,36 @@ int main(void)
    uint8_t  *code   = (uint8_t*)  &st;
 
    code2ir_shot(code, msg, 16);
+   hitting(1,2,3,4);
+   int i;
    /// CODER
     sei();
     do{
+      //// Software interrupts
+      // check recv buffer...
+      i=8;
+      while(i--){
+        if((recv_mask[0]>>i)&1){
+          if(recv[i*2]==0x3b){
+            if(recv[i*2+1]==0x0a){
+              cli();
+                audi+=5;
+                recv_mask[0]&=~(1<<i); // drop it bit
+              sei();
+            }
+          }
+        }
+      }
+      ///////////////////////////
+
+
+      //led_code(0x00);
       cli();
       if(send_is_freely()==0){
         sei();
-        _delay_ms(1000);
+        led_code(i++);
+        _delay_ms(500);
+        //audi=3;
         cli();
         send_set_message(msg, 8);
       }

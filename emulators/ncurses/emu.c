@@ -93,7 +93,7 @@ int HelpWindow()
 	int i;
 	int optsize = sizeof(optlist)/sizeof(struct option);
   L=LINES;
-  C=COLS;
+  C=COLS/2;
 	int WL=optsize+2;
 
   // Malloc's windows
@@ -130,11 +130,12 @@ extern int hitstat_cur;
 
 int StatusWindow(int line)
 {
-  int L,C;
+  int L,C, start_C;
 	int i;
 	int optsize = sizeof(optlist)/sizeof(struct option);
   L=LINES;
-  C=COLS;
+  start_C=COLS/2;
+  C=COLS/2;
 	int WL=optsize+2+line;
 
   // Malloc's windows
@@ -142,7 +143,7 @@ int StatusWindow(int line)
   if(C>90) C=90;
   if(L>WL) L=WL;
 
-  w_status = newwin(L, C, line, 0);
+  w_status = newwin(L, C, 0, start_C);
   box(w_status, 0, 0);
 
   // TITLE
