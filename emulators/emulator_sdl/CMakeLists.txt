@@ -27,16 +27,18 @@ endif ()
 
 file( MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/resources )
 if (WIN32)
-	file(COPY ${CMAKE_SOURCE_DIR}/resources/man_sprite.png DESTINATION ${CMAKE_BINARY_DIR}/resources/man.png)
+	execute_process(COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/resources/man_sprite.png ${CMAKE_BINARY_DIR}/resources/man.png)
+	execute_process(COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/resources/zone_sprite.png ${CMAKE_BINARY_DIR}/resources/zone.png)
 else ()
 	execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/resources/man_sprite.png ${CMAKE_BINARY_DIR}/resources/man.png)
-endif ()                                                
+	execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/resources/zone_sprite.png ${CMAKE_BINARY_DIR}/resources/zone.png)
+endif ()
 ################################################################################
 # Set up the basic build environment
 
 if (CMAKE_BUILD_TYPE STREQUAL "")
 	# CMake defaults to leaving CMAKE_BUILD_TYPE empty. This messes up
-	# differentiation between debug and release builds.              
+	# differentiation between debug and release builds.
 	set (CMAKE_BUILD_TYPE "RelWithDebInfo" CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel." FORCE)
 endif ()
 

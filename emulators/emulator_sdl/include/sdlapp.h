@@ -21,6 +21,7 @@
 	#include "main.h"
 	#include "sdlevent.h"
 	#include "entity.h"
+	#include "utils.h"
 	/**
 	@class SDLApp
 	Main class to work with SDL
@@ -35,18 +36,29 @@
 			///Image surface
 			SDL_Surface* Surf_Image;
 			///Target sprite
-			CEntity sprite;
+			CEntity target;
+			///Zones sprite
+			CEntity zone;
 			///Rotation direction
 			int r_direction;
+			///Zones list
+			std::map<Uint32, T_HitZone> zone_list;
+			///Current zone
+			T_pHitZone CurrentZone;
 		public:
 			SDLApp( );
 			int OnExecute( );
-			
+
 			bool OnInit( );
 			void OnEvent( SDL_Event* Event );
 			void OnExit( );
+
 			void OnKeyUp( SDLKey sym, SDLMod mod, Uint16 unicode);
 			void OnKeyDown( SDLKey sym, SDLMod mod, Uint16 unicode);
+
+			void OnMouseMove( int mX, int mY, int relX, int relY, bool Left,bool Right,bool Middle );
+			void OnLButtonUp( int mX, int mY );
+
 			void OnLoop( );
 			void OnRender( );
 			void OnCleanup( );

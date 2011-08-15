@@ -36,6 +36,8 @@ SDL_Surface* SDLSurf::OnLoad( std::string filename )
 			//Free the old image
 			SDL_FreeSurface( loadedImage );
 		}
+	else
+		printf ( "IMG_Load: %s\n", IMG_GetError () );
 	//Return the optimized image
 	return optimizedImage;
 }
@@ -90,4 +92,24 @@ bool SDLSurf::Transparent( SDL_Surface* Surf_Dest, Uint32 color)
 	SDL_SetColorKey( Surf_Dest, SDL_SRCCOLORKEY | SDL_RLEACCEL, color);
 
 	return true;
+}
+
+Uint32 SDLSurf::OnMouseOver( SDL_Surface* Surf_Src, int mX, int mY, int X2, int Y2, int W, int H )
+{
+	Uint32 color = 0;
+	if ( SDL_MUSTLOCK(Surf_Src) )
+	{
+		if ( SDL_LockSurface(Surf_Src) < 0 )
+		{
+			return color;
+		}
+	}
+
+	color = getpixel( Surf_Src, mX + X2, mY + Y2 );
+
+	if ( SDL_MUSTLOCK(Surf_Src) )
+	{
+		SDL_UnlockSurface(Surf_Src);
+	}
+	return color;
 }

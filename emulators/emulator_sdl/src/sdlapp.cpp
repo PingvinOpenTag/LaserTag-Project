@@ -30,11 +30,25 @@ bool SDLApp::OnInit( )
 		return false;
 	}
 
-	if(	!sprite.OnLoad("./resources/man.png", 125, 440, 8) )
+	if(	!target.OnLoad("./resources/man.png", 125, 440, 8) )
 	{
 		return false;
 	}
-	sprite.X = SCREEN_WIDTH/2 - 62.5f;
+	if(	!zone.OnLoad("./resources/zone.png", 125, 440, 8) )
+	{
+		return false;
+	}
+	T_HitZone tmp[] = { {hit_head, "Head"}, {hit_chest, "Chest"} };
+	zone_list[0xFF00] = tmp[0];
+	zone_list[0xFF0000] = tmp[1];
+	CurrentZone = NULL;
+
+	target.X = SCREEN_WIDTH/2 - 62.5f;
+	zone.X = SCREEN_WIDTH/2 - 62.5f;
+	zone.SetVisible(false);
+
+	CEntity::EntityList.push_back(&target);
+	CEntity::EntityList.push_back(&zone);
 
     return true;
 }
@@ -47,6 +61,20 @@ void SDLApp::OnEvent(SDL_Event* Event)
 void SDLApp::OnExit()
 {
 	running = false;
+}
+
+void SDLApp::OnLButtonUp( int mX, int mY )
+{
+	if ( CurrentZone )
+		CurrentZone->func(NULL);
+}
+
+void SDLApp::OnMouseMove( int mX, int mY, int relX, int relY, bool Left, bool Right, bool Middle )
+{
+	Uint32 color = zone.OnMouseOver( mX, mY );
+	CurrentZone = NULL;
+	if ( zone_list.count(color) )
+		CurrentZone = &zone_list[color];
 }
 
 void SDLApp::OnKeyDown( SDLKey sym, SDLMod mod, Uint16 unicode)
@@ -87,18 +115,16 @@ void SDLApp::OnLoop( )
 	for ( int i = 0;i < CEntity::EntityList.size();i++ )
 	{
 		if ( !CEntity::EntityList[i] ) continue;
-		CEntity::EntityList[i]->OnLoop();
+			switch ( r_direction )
+			{
+				case ROTATE_LEFT:
+					CEntity::EntityList[i]->NextFrame( );
+				break;
+				case ROTATE_RIGHT:
+					CEntity::EntityList[i]->PrevFrame( );
+				break;
+			}
 	}
-	
-	switch	( r_direction )
-	{
-		case	ROTATE_LEFT:
-			sprite.NextFrame( );
-		break;
-		case	ROTATE_RIGHT:
-			sprite.PrevFrame( );
-		break;
-	}		
 }
 
 void SDLApp::OnRender()
@@ -109,13 +135,11 @@ void SDLApp::OnRender()
 		if( !CEntity::EntityList[i] ) continue;
 		CEntity::EntityList[i]->OnRender( Surf_Display );
 	}
-	sprite.OnRender( Surf_Display );
     SDL_Flip(Surf_Display);
 }
 
 void SDLApp::OnCleanup()
 {
-//	SDL_FreeSurface(Surf_Image);
 	for( int i = 0;i < CEntity::EntityList.size();i++ )
 	{
 		if( !CEntity::EntityList[i] ) continue;
@@ -141,11 +165,12 @@ int SDLApp::OnExecute()
 
 	SDL_Event Event;
 	Timer fps;
-	
+	int cap = 1;
+
 	while( running )
 	{
 		fps.start();
-		
+
 		while( SDL_PollEvent( &Event ) )
 		{
 			OnEvent(&Event);
@@ -153,7 +178,7 @@ int SDLApp::OnExecute()
 		OnLoop();
 		OnRender();
 		//If we want to cap the frame rate
-		if ( ( true ) && ( fps.get_ticks() < 1000 / FRAMES_PER_SECOND ) )
+		if ( ( cap == 1 ) && ( fps.get_ticks() < 1000 / FRAMES_PER_SECOND ) )
 		{
 			//Sleep the remaining frame time
 			SDL_Delay( ( 1000 / FRAMES_PER_SECOND ) - fps.get_ticks() );

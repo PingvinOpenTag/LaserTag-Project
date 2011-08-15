@@ -26,6 +26,7 @@ CEntity::CEntity()
 	X = Y = 0.0f;
 	Width = Height = 0;
 	AnimState = 0;
+	Visible = true;
 }
 
 CEntity::~CEntity() {}
@@ -67,9 +68,18 @@ void CEntity::PrevFrame()
 	MoveFrame( -1 );
 }
 
+void CEntity::SetVisible( )
+{
+	Visible =!Visible;
+}
+void CEntity::SetVisible( bool Visible )
+{
+	this->Visible = Visible;
+}
+
 void CEntity::OnRender(SDL_Surface* Surf_Display)
 {
-	if ( Surf_Entity == NULL || Surf_Display == NULL ) return;
+	if ( Surf_Entity == NULL || Surf_Display == NULL || !Visible ) return;
 
 	SDLSurf::OnDraw( Surf_Display, Surf_Entity, X, Y, AnimState * Width, Anim_Control.GetCurrentFrame() * Height, Width, Height );
 }
@@ -82,4 +92,10 @@ void CEntity::OnCleanup()
 	}
 
 	Surf_Entity = NULL;
+}
+
+Uint32 CEntity::OnMouseOver( int mX, int mY )
+{
+	if ( Surf_Entity == NULL ) return 0;
+	return SDLSurf::OnMouseOver( Surf_Entity, mX - X, mY - Y, AnimState * Width, Anim_Control.GetCurrentFrame() * Height, Width, Height);
 }

@@ -33,5 +33,6 @@
 				static bool OnDraw(SDL_Surface* Surf_Dest, SDL_Surface* Surf_Src, int X, int Y);
 				static bool OnDraw(SDL_Surface* Surf_Dest, SDL_Surface* Surf_Src, int X, int Y, int X2, int Y2, int W, int H);
 				static bool Transparent( SDL_Surface* Surf_Dest, Uint32 color );
+				static Uint32 OnMouseOver( SDL_Surface* Surf_Src, int mX, int mY, int X2, int Y2, int W, int H );
 		};
 #endif

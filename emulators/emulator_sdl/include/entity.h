@@ -25,7 +25,7 @@
 	Entity class
 	*/
 
-	class CEntity 
+	class CEntity
 	{
 		public:
 			static std::vector<CEntity*> EntityList;
@@ -33,6 +33,7 @@
 		protected:
 			CAnimation Anim_Control;
 			SDL_Surface* Surf_Entity;
+			bool Visible;
 
 		public:
 			float X;
@@ -50,9 +51,14 @@
 			virtual void OnLoop();
 			virtual void OnRender( SDL_Surface* Surf_Display );
 			virtual void OnCleanup();
-			
+
 			virtual void NextFrame();
 			virtual void PrevFrame();
-			virtual void MoveFrame(int Frame);
+			virtual void MoveFrame( int Frame );
+
+			virtual void SetVisible( );
+			virtual void SetVisible( bool Visible );
+
+			virtual Uint32 OnMouseOver( int mX, int mY );
 	};
 #endif

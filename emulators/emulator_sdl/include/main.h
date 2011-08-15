@@ -34,14 +34,16 @@
 
 	#include <string>
 	#include <vector>
+	#include <map>
+
 	#include <SDL.h>
 	#include <SDL_image.h>
-	
+
 	#ifdef WIN32
 		#include <windows.h>
 		#include <io.h>
 	#endif
-	
+
 	#include "sdlapp.h"
 	#include "sdlevent.h"
 	#include "sdlsurf.h"

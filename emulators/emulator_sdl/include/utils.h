@@ -22,4 +22,25 @@
 	#ifdef WIN32
 		void redirect_stdio(void);
 	#endif
+
+	/*
+	 * Set the pixel at (x, y) to the given value
+	 * NOTE: The surface must be locked before calling this!
+	 */
+	 void putpixel( SDL_Surface *surface, int x, int y, Uint32 pixel );
+	/*
+	 * Return the pixel value at (x, y)
+	 * NOTE: The surface must be locked before calling this!
+	 */
+	Uint32 getpixel( SDL_Surface *surface, int x, int y );
+
+	typedef struct _HitZone
+	{
+		int (*func)(void* parms);
+		std::string zone_name;
+	} T_HitZone, *T_pHitZone;
+
+	int hit_head( void *arg );
+	int hit_chest( void *arg );
+
 #endif
