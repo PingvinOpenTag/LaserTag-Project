@@ -33,6 +33,9 @@
 				static bool OnDraw(SDL_Surface* Surf_Dest, SDL_Surface* Surf_Src, int X, int Y);
 				static bool OnDraw(SDL_Surface* Surf_Dest, SDL_Surface* Surf_Src, int X, int Y, int X2, int Y2, int W, int H);
 				static bool Transparent( SDL_Surface* Surf_Dest, Uint32 color );
+				static bool LockSurface( SDL_Surface* Surf_Src );
+				static bool UnLockSurface( SDL_Surface* Surf_Src );
+				static SDL_Surface* CopySurface( SDL_Surface* Surf_Src, Uint32 color_mask);
 				static Uint32 OnMouseOver( SDL_Surface* Surf_Src, int mX, int mY, int X2, int Y2, int W, int H );
 		};
 #endif

@@ -37,7 +37,7 @@ SDL_Surface* SDLSurf::OnLoad( std::string filename )
 			SDL_FreeSurface( loadedImage );
 		}
 	else
-		printf ( "IMG_Load: %s\n", IMG_GetError () );
+		std::cerr<<"IMG_Load: "<<IMG_GetError( )<<std::endl;
 	//Return the optimized image
 	return optimizedImage;
 }
@@ -94,22 +94,74 @@ bool SDLSurf::Transparent( SDL_Surface* Surf_Dest, Uint32 color)
 	return true;
 }
 
-Uint32 SDLSurf::OnMouseOver( SDL_Surface* Surf_Src, int mX, int mY, int X2, int Y2, int W, int H )
+SDL_Surface* SDLSurf::CopySurface( SDL_Surface* Surf_Src, Uint32 color)
 {
-	Uint32 color = 0;
+	if( Surf_Src  == NULL )
+		return false;
+
+	Uint32 Amask = 0;
+	SDL_Surface *dst = NULL;
+
+	if( Surf_Src->flags & SDL_SRCCOLORKEY )
+		Amask = 0;
+	else
+		Amask = Surf_Src->format->Amask;
+
+	dst = SDL_CreateRGBSurface( SDL_SWSURFACE,
+									Surf_Src->w,
+									Surf_Src->h,
+									Surf_Src->format->BitsPerPixel,
+									Surf_Src->format->Rmask,
+									Surf_Src->format->Gmask,
+									Surf_Src->format->Bmask,
+									Amask );
+	if ( !dst )
+	{
+		std::cerr<<"CreateRGBSurface failed: "<<SDL_GetError()<<std::endl;
+		return dst;
+	}
+	//Go through columns
+	for( int x = 0; x < dst->w; x++ )
+	{
+		//Go through rows
+		for( int y = 0; y < dst->h; y++ )
+		{
+			//Get pixel
+			Uint32 pixel = getpixel( Surf_Src, x, y );;
+			//Copy pixel
+			if ( color != pixel)
+				pixel = SDL_MapRGB( Surf_Src->format, 0xFF, 0, 0xFF );
+
+			putpixel( dst, x, y, pixel );
+		}
+	}
+	return dst;
+}
+
+bool SDLSurf::LockSurface( SDL_Surface* Surf_Src )
+{
 	if ( SDL_MUSTLOCK(Surf_Src) )
 	{
 		if ( SDL_LockSurface(Surf_Src) < 0 )
 		{
-			return color;
+			return false;
 		}
 	}
+	return true;
+}
 
-	color = getpixel( Surf_Src, mX + X2, mY + Y2 );
-
+bool SDLSurf::UnLockSurface( SDL_Surface* Surf_Src )
+{
 	if ( SDL_MUSTLOCK(Surf_Src) )
 	{
 		SDL_UnlockSurface(Surf_Src);
 	}
+	return true;
+}
+
+Uint32 SDLSurf::OnMouseOver( SDL_Surface* Surf_Src, int mX, int mY, int X2, int Y2, int W, int H )
+{
+	Uint32 color;
+	color = getpixel( Surf_Src, mX + X2, mY + Y2 );
 	return color;
 }

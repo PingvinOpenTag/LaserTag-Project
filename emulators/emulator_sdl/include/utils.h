@@ -34,13 +34,8 @@
 	 */
 	Uint32 getpixel( SDL_Surface *surface, int x, int y );
 
-	typedef struct _HitZone
-	{
-		int (*func)(void* parms);
-		std::string zone_name;
-	} T_HitZone, *T_pHitZone;
-
 	int hit_head( void *arg );
 	int hit_chest( void *arg );
+	int hit_weapon( void *arg );
 
 #endif

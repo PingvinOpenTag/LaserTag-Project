@@ -21,7 +21,6 @@
 	#include "main.h"
 	#include "sdlevent.h"
 	#include "entity.h"
-	#include "utils.h"
 	/**
 	@class SDLApp
 	Main class to work with SDL

@@ -48,6 +48,8 @@
 			virtual ~CEntity();
 
 			virtual bool OnLoad( std::string filename, int Width, int Height, int MaxFrames );
+			virtual bool OnLoad( SDL_Surface* Surf_Src, int Width, int Height, int MaxFrames );
+
 			virtual void OnLoop();
 			virtual void OnRender( SDL_Surface* Surf_Display );
 			virtual void OnCleanup();
@@ -58,7 +60,16 @@
 
 			virtual void SetVisible( );
 			virtual void SetVisible( bool Visible );
+			virtual void MoveTo( int X, int Y );
+			virtual void fMoveTo( float X, float Y );
+			virtual void Center( );
+			virtual void CenterX( );
+			virtual void CenterY( );
 
-			virtual Uint32 OnMouseOver( int mX, int mY );
+			virtual SDL_Surface* GetSurface( );
+			virtual bool LockSurface( );
+			virtual bool UnLockSurface( );
+
+			virtual Uint32 OnMouseOver( int mX, int mY, bool GetColor = false );
 	};
 #endif

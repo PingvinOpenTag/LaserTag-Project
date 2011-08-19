@@ -48,6 +48,23 @@ bool CEntity::OnLoad( std::string filename, int Width, int Height, int MaxFrames
 	return true;
 }
 
+bool CEntity::OnLoad( SDL_Surface* Surf_Src, int Width, int Height, int MaxFrames )
+{
+	if ( Surf_Src == NULL )
+		return false;
+
+	Surf_Entity = Surf_Src;
+
+	SDLSurf::Transparent(Surf_Entity, SDL_MapRGB( Surf_Entity->format, 0xFF, 0, 0xFF ));
+
+	this->Width = Width;
+	this->Height = Height;
+
+	Anim_Control.MaxFrames = MaxFrames;
+
+	return true;
+}
+
 void CEntity::OnLoop()
 {
 	Anim_Control.OnAnimate();
@@ -60,21 +77,50 @@ void CEntity::MoveFrame(int Frame)
 
 void CEntity::NextFrame()
 {
-	MoveFrame( 1 );
+	this->MoveFrame( 1 );
 }
 
 void CEntity::PrevFrame()
 {
-	MoveFrame( -1 );
+	this->MoveFrame( -1 );
 }
 
 void CEntity::SetVisible( )
 {
 	Visible =!Visible;
 }
+
 void CEntity::SetVisible( bool Visible )
 {
 	this->Visible = Visible;
+}
+
+void CEntity::MoveTo( int X, int Y )
+{
+	this->X = X;
+	this->Y = Y;
+}
+
+void CEntity::fMoveTo( float X, float Y )
+{
+	this->X = X;
+	this->Y = Y;
+}
+
+void CEntity::Center( )
+{
+	this->CenterX();
+	this->CenterY();
+}
+
+void CEntity::CenterX( )
+{
+	this->X = this->X - this->Width/2;
+}
+
+void CEntity::CenterY( )
+{
+	this->Y = this->Y - this->Height/2;
 }
 
 void CEntity::OnRender(SDL_Surface* Surf_Display)
@@ -94,8 +140,26 @@ void CEntity::OnCleanup()
 	Surf_Entity = NULL;
 }
 
-Uint32 CEntity::OnMouseOver( int mX, int mY )
+Uint32 CEntity::OnMouseOver( int mX, int mY, bool GetColor )
 {
 	if ( Surf_Entity == NULL ) return 0;
-	return SDLSurf::OnMouseOver( Surf_Entity, mX - X, mY - Y, AnimState * Width, Anim_Control.GetCurrentFrame() * Height, Width, Height);
+	if ( ( mX < X || mY < Y ) || ( mX > X + Width || mY > Y + Height ) ) return 0;
+	return GetColor?
+					SDLSurf::OnMouseOver( Surf_Entity, mX - X, mY - Y, AnimState * Width, Anim_Control.GetCurrentFrame() * Height, Width, Height):
+					1;
+}
+
+bool CEntity::LockSurface( )
+{
+	return SDLSurf::LockSurface( Surf_Entity );
+}
+
+bool CEntity::UnLockSurface( )
+{
+	return SDLSurf::UnLockSurface( Surf_Entity );
+}
+
+SDL_Surface* CEntity::GetSurface( )
+{
+	return Surf_Entity;
 }

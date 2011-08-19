@@ -96,12 +96,18 @@ Uint32 getpixel(SDL_Surface *surface, int x, int y)
 
 int hit_head( void *arg )
 {
-	printf("Head\n");
+	std::cout<<"Target: Head"<<std::endl;
 	return 0;
 }
 
 int hit_chest( void *arg )
 {
-	printf("Chest\n");
+	std::cout<<"Target: Chest"<<std::endl;
+	return 0;
+}
+
+int hit_weapon( void *arg )
+{
+	std::cout<<"Target: Weapon"<<std::endl;
 	return 0;
 }

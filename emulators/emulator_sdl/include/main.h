@@ -19,6 +19,19 @@
 #ifndef __MAIN_H__
 	#define __MAIN_H__
 
+	#include <iostream>
+	#include <string>
+	#include <vector>
+	#include <map>
+
+	#include <SDL.h>
+	#include <SDL_image.h>
+
+	#ifdef WIN32
+		#include <windows.h>
+		#include <io.h>
+	#endif
+
 	//Screen attributes
 	const int SCREEN_WIDTH = 640;
 	const int SCREEN_HEIGHT = 480;
@@ -32,17 +45,18 @@
 	const int ROTATE_LEFT = 1;
 	const int ROTATE_RIGHT = -1;
 
-	#include <string>
-	#include <vector>
-	#include <map>
+	//Cursors
+	enum CURSOR_TYPE { EMU_DEFAULT, EMU_TARGET };
 
-	#include <SDL.h>
-	#include <SDL_image.h>
-
-	#ifdef WIN32
-		#include <windows.h>
-		#include <io.h>
-	#endif
+	//Hit zone data
+	class CEntity;
+	typedef struct _HitZone
+	{
+		std::string zone_name;
+		CEntity* zone;
+		Uint32 color;
+		int (*func)(void* parms);
+	} T_HitZone, *T_pHitZone;
 
 	#include "sdlapp.h"
 	#include "sdlevent.h"
@@ -51,4 +65,5 @@
 	#include "timer.h"
 	#include "entity.h"
 	#include "utils.h"
+
 #endif
