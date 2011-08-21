@@ -85,49 +85,62 @@ void CEntity::PrevFrame()
 	this->MoveFrame( -1 );
 }
 
-void CEntity::SetVisible( )
+CEntity& CEntity::SetVisible( )
 {
 	Visible =!Visible;
+	return *this;
 }
 
-void CEntity::SetVisible( bool Visible )
+CEntity& CEntity::SetVisible( bool Visible )
 {
 	this->Visible = Visible;
+	return *this;
 }
 
-void CEntity::MoveTo( int X, int Y )
+CEntity& CEntity::MoveTo( int X, int Y )
 {
 	this->X = X;
 	this->Y = Y;
+	return *this;
 }
 
-void CEntity::fMoveTo( float X, float Y )
+CEntity& CEntity::fMoveTo( float X, float Y )
 {
 	this->X = X;
 	this->Y = Y;
+	return *this;
 }
 
-void CEntity::Center( )
+CEntity& CEntity::Center( )
 {
 	this->CenterX();
 	this->CenterY();
+	return *this;
 }
 
-void CEntity::CenterX( )
+CEntity& CEntity::CenterX( )
 {
 	this->X = this->X - this->Width/2;
+	return *this;
 }
 
-void CEntity::CenterY( )
+CEntity& CEntity::CenterY( )
 {
 	this->Y = this->Y - this->Height/2;
+	return *this;
 }
 
 void CEntity::OnRender(SDL_Surface* Surf_Display)
 {
 	if ( Surf_Entity == NULL || Surf_Display == NULL || !Visible ) return;
 
-	SDLSurf::OnDraw( Surf_Display, Surf_Entity, X, Y, AnimState * Width, Anim_Control.GetCurrentFrame() * Height, Width, Height );
+	SDL_Rect src;
+	src.x = AnimState * Width;
+	src.y = Anim_Control.GetCurrentFrame() * Height;
+	src.w = Width;
+	src.h = Height;
+
+	SDLSurf::OnDraw( Surf_Display, Surf_Entity, X, Y, src );
 }
 
 void CEntity::OnCleanup()
@@ -145,7 +158,8 @@ Uint32 CEntity::OnMouseOver( int mX, int mY, bool GetColor )
 	if ( Surf_Entity == NULL ) return 0;
 	if ( ( mX < X || mY < Y ) || ( mX > X + Width || mY > Y + Height ) ) return 0;
 	return GetColor?
-					SDLSurf::OnMouseOver( Surf_Entity, mX - X, mY - Y, AnimState * Width, Anim_Control.GetCurrentFrame() * Height, Width, Height):
+//					SDLSurf::OnMouseOver( Surf_Entity, mX - X, mY - Y, AnimState * Width, Anim_Control.GetCurrentFrame() * Height):
+					SDLSurf::OnMouseOver( Surf_Entity, mX - X + AnimState * Width, mY - Y + Anim_Control.GetCurrentFrame() * Height):
 					1;
 }
 

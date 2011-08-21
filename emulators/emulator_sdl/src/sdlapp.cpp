@@ -59,12 +59,9 @@ bool SDLApp::OnInit( )
 
 	CurrentZone = NULL;
 
-	target.fMoveTo( SCREEN_WIDTH/2, 0 );
-	target.CenterX( );
+	target.fMoveTo( SCREEN_WIDTH/2, 0 ).CenterX( );
 
-	zone.fMoveTo( SCREEN_WIDTH/2, 0 );
-	zone.CenterX( );
-	zone.SetVisible( false );
+	zone.fMoveTo( SCREEN_WIDTH/2, 0 ).CenterX( ).SetVisible( false );
 
 	CEntity::EntityList.push_back( &target );
 	CEntity::EntityList.push_back( &zone );
@@ -130,6 +127,9 @@ void SDLApp::OnKeyDown( SDLKey sym, SDLMod mod, Uint16 unicode)
 		case SDLK_d:
 			r_direction = ROTATE_LEFT;
 		break;
+
+		default:
+			break;
 	}
 }
 
@@ -145,12 +145,15 @@ void SDLApp::OnKeyUp( SDLKey sym, SDLMod mod, Uint16 unicode)
 		case SDLK_d:
 			r_direction = ROTATE_NONE;
 		break;
+
+		default:
+			break;
 	}
 }
 
 void SDLApp::OnLoop( )
 {
-	for ( int i = 0;i < CEntity::EntityList.size();i++ )
+	for ( unsigned int i = 0; i < CEntity::EntityList.size(); i++ )
 	{
 		if ( !CEntity::EntityList[i] ) continue;
 			switch ( r_direction )
@@ -168,7 +171,7 @@ void SDLApp::OnLoop( )
 void SDLApp::OnRender()
 {
 	SDL_FillRect(Surf_Display, NULL, 0x000000);
-	for( int i = 0;i < CEntity::EntityList.size();i++ )
+	for( unsigned int i = 0;i < CEntity::EntityList.size();i++ )
 	{
 		if( !CEntity::EntityList[i] ) continue;
 		CEntity::EntityList[i]->OnRender( Surf_Display );
@@ -178,7 +181,7 @@ void SDLApp::OnRender()
 
 void SDLApp::OnCleanup()
 {
-	for( int i = 0;i < CEntity::EntityList.size();i++ )
+	for( unsigned int i = 0; i < CEntity::EntityList.size(); i++ )
 	{
 		if( !CEntity::EntityList[i] ) continue;
 		CEntity::EntityList[i]->OnCleanup();

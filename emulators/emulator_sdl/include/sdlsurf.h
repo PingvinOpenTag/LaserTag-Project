@@ -26,16 +26,75 @@
 		class SDLSurf
 		{
 			public:
+				///Do nothing
 				SDLSurf();
 
 			public:
-				static SDL_Surface* OnLoad( std::string );
+				/**
+				Load surface from file
+				@param filename file name to load
+				@return pointer to SDL_Surface structure
+				*/
+				static SDL_Surface* OnLoad( std::string filename );
+
+				/**
+				Draw surface
+				@param Surf_Dest* destination surface
+				@param Surf_Src* source surface
+				@param X X coord
+				@param Y Y coord
+				@return true if everything good, false otherwise
+				*/
 				static bool OnDraw(SDL_Surface* Surf_Dest, SDL_Surface* Surf_Src, int X, int Y);
-				static bool OnDraw(SDL_Surface* Surf_Dest, SDL_Surface* Surf_Src, int X, int Y, int X2, int Y2, int W, int H);
+
+				/**
+				Draw part of surface
+				@param Surf_Dest* destination surface
+				@param Surf_Src* source surface
+				@param X X coord
+				@param Y Y coord
+				@param Rect_Src part of surface to draw
+				@return true if everything good, false otherwise
+				*/
+				static bool OnDraw(SDL_Surface* Surf_Dest, SDL_Surface* Surf_Src, int X, int Y, SDL_Rect& Rect_Src);
+
+				/**
+				Set transparent color on surface
+				@param Surf_Dest* source surface
+				@param color transparent color
+				@return true if everything good, false otherwise
+				*/
 				static bool Transparent( SDL_Surface* Surf_Dest, Uint32 color );
+
+				/**
+				Lock surface for low-level pixel manipulations
+				@param Surf_Src* surface to lock
+				@return true if everything good, false otherwise
+				*/
 				static bool LockSurface( SDL_Surface* Surf_Src );
+
+				/**
+				UnLock surface
+				@param Surf_Src* surface to unlock
+				@return true if everything good, false otherwise
+				*/
 				static bool UnLockSurface( SDL_Surface* Surf_Src );
+
+				/**
+				Copy surface by color mask
+				@param Surf_Src* surface to copy
+				@param color_mask color to copy
+				@return pointer to new SDL_Surface
+				*/
 				static SDL_Surface* CopySurface( SDL_Surface* Surf_Src, Uint32 color_mask);
-				static Uint32 OnMouseOver( SDL_Surface* Surf_Src, int mX, int mY, int X2, int Y2, int W, int H );
+
+				/**
+				Handle MouseOver events
+				@param Surf_Src* to check
+				@param mX X coord on surface
+				@param mY Y coord on surface
+				@return color under coords
+				*/
+				static Uint32 OnMouseOver( SDL_Surface* Surf_Src, int mX, int mY);
 		};
 #endif

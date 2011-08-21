@@ -58,13 +58,13 @@
 			virtual void PrevFrame();
 			virtual void MoveFrame( int Frame );
 
-			virtual void SetVisible( );
-			virtual void SetVisible( bool Visible );
-			virtual void MoveTo( int X, int Y );
-			virtual void fMoveTo( float X, float Y );
-			virtual void Center( );
-			virtual void CenterX( );
-			virtual void CenterY( );
+			virtual CEntity& SetVisible( );
+			virtual CEntity& SetVisible( bool Visible );
+			virtual CEntity& MoveTo( int X, int Y );
+			virtual CEntity& fMoveTo( float X, float Y );
+			virtual CEntity& Center( );
+			virtual CEntity& CenterX( );
+			virtual CEntity& CenterY( );
 
 			virtual SDL_Surface* GetSurface( );
 			virtual bool LockSurface( );

@@ -58,7 +58,7 @@ bool SDLSurf::OnDraw( SDL_Surface* Surf_Dest, SDL_Surface* Surf_Src, int X, int 
 	return true;
 }
 
-bool SDLSurf::OnDraw( SDL_Surface* Surf_Dest, SDL_Surface* Surf_Src, int X, int Y, int X2, int Y2, int W, int H )
+bool SDLSurf::OnDraw( SDL_Surface* Surf_Dest, SDL_Surface* Surf_Src, int X, int Y, SDL_Rect& Rect_Src )
 {
 	if( Surf_Dest == NULL || Surf_Src == NULL )
 	{
@@ -72,10 +72,10 @@ bool SDLSurf::OnDraw( SDL_Surface* Surf_Dest, SDL_Surface* Surf_Src, int X, int 
 
 	SDL_Rect SrcR;
 
-	SrcR.x = X2;
-	SrcR.y = Y2;
-	SrcR.w = W;
-	SrcR.h = H;
+	SrcR.x = Rect_Src.x;
+	SrcR.y = Rect_Src.y;
+	SrcR.w = Rect_Src.w;
+	SrcR.h = Rect_Src.h;
 
 	SDL_BlitSurface( Surf_Src, &SrcR, Surf_Dest, &DestR );
 
@@ -159,9 +159,9 @@ bool SDLSurf::UnLockSurface( SDL_Surface* Surf_Src )
 	return true;
 }
 
-Uint32 SDLSurf::OnMouseOver( SDL_Surface* Surf_Src, int mX, int mY, int X2, int Y2, int W, int H )
+Uint32 SDLSurf::OnMouseOver( SDL_Surface* Surf_Src, int mX, int mY)
 {
 	Uint32 color;
-	color = getpixel( Surf_Src, mX + X2, mY + Y2 );
+	color = getpixel( Surf_Src, mX, mY );
 	return color;
 }
