@@ -26,12 +26,17 @@ if (NOT Build_Dir_OK)
 endif ()
 
 file( MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/resources )
+file( MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/resources/fonts )
+file( MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/resources/images )
+
 if (WIN32)
-	execute_process(COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/resources/man_sprite.png ${CMAKE_BINARY_DIR}/resources/man.png)
-	execute_process(COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/resources/zone_sprite.png ${CMAKE_BINARY_DIR}/resources/zone.png)
+	execute_process(COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/resources/images/man_sprite.png ${CMAKE_BINARY_DIR}/resources/images/man.png)
+	execute_process(COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/resources/images/zone_sprite.png ${CMAKE_BINARY_DIR}/resources/images/zone.png)
+	execute_process(COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/resources/fonts/main.ttf ${CMAKE_BINARY_DIR}/resources/fonts/main.ttf)
 else ()
-	execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/resources/man_sprite.png ${CMAKE_BINARY_DIR}/resources/man.png)
-	execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/resources/zone_sprite.png ${CMAKE_BINARY_DIR}/resources/zone.png)
+	execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/resources/images/man_sprite.png ${CMAKE_BINARY_DIR}/resources/images/man.png)
+	execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/resources/images/zone_sprite.png ${CMAKE_BINARY_DIR}/resources/images/zone.png)
+	execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/resources/fonts/main.ttf ${CMAKE_BINARY_DIR}/resources/fonts/main.ttf)
 endif ()
 ################################################################################
 # Set up the basic build environment
@@ -84,6 +89,7 @@ target_link_libraries (${App_Name}
 # REQUIRED does not work in CMake <=2.4.6 for SDL
 Find_Package ( SDL REQUIRED )
 Find_Package ( SDL_image REQUIRED ) # if using SDL_image
+Find_Package ( SDL_ttf REQUIRED ) # if using SDL_ttf
 
 if (NOT SDL_FOUND)
 	message (FATAL_ERROR "SDL not found!")
@@ -96,5 +102,6 @@ include_directories(
 target_link_libraries(${App_Name}
 	${SDL_LIBRARY}
 	${SDLIMAGE_LIBRARY} # if using SDL_image, obviously
+	${SDLTTF_LIBRARY} # if using SDL_ttf, obviously
 	${TARGET_LINK_LIBRARIES}
 )

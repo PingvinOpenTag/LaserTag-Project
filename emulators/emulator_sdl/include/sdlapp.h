@@ -19,8 +19,9 @@
 #ifndef __SDLAPP_H__
 	#define __SDLAPP_H__
 	#include "main.h"
-	#include "sdlevent.h"
-	#include "entity.h"
+	class SDLEvent;
+	class SDLFont;
+
 	/**
 	@class SDLApp
 	Main class to work with SDL
@@ -30,18 +31,28 @@
 		private:
 			///App state
 			bool running;
+
 			///Display surface
 			SDL_Surface* Surf_Display;
+
 			///Image surface
 			SDL_Surface* Surf_Image;
+
 			///Target sprite
-			CEntity target;
+			CEntity* target;
+
 			///Zones sprite
-			CEntity zone;
+			CEntity* zone;
+
+			///Font
+			SDLFont* font;
+
 			///Rotation direction
 			int r_direction;
+
 			///Zones list
 			std::map<Uint32, T_HitZone> zone_list;
+
 			///Current zone
 			T_pHitZone CurrentZone;
 		public:

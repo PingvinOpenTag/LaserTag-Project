@@ -20,17 +20,23 @@
 	#define __MAIN_H__
 
 	#include <iostream>
+	#include <sstream>
 	#include <string>
+	#include <deque>
 	#include <vector>
 	#include <map>
 
 	#include <SDL.h>
 	#include <SDL_image.h>
+	#include <SDL_ttf.h>
 
 	#ifdef WIN32
 		#include <windows.h>
 		#include <io.h>
 	#endif
+
+	//Resources dir
+	const std::string DIR_RESOURCES = "./resources";
 
 	//Screen attributes
 	const int SCREEN_WIDTH = 640;
@@ -45,11 +51,16 @@
 	const int ROTATE_LEFT = 1;
 	const int ROTATE_RIGHT = -1;
 
-	//Cursors
-	enum CURSOR_TYPE { EMU_DEFAULT, EMU_TARGET };
+	//Colorkey
+	const SDL_Color SDL_COLORKEY = {0xFF, 0, 0xFF};
 
+	#include "timer.h"
+	#include "utils.h"
+
+	#include "sdlobject.h"
+	#include "anim.h"
+	#include "entity.h"
 	//Hit zone data
-	class CEntity;
 	typedef struct _HitZone
 	{
 		std::string zone_name;
@@ -58,12 +69,10 @@
 		int (*func)(void* parms);
 	} T_HitZone, *T_pHitZone;
 
-	#include "sdlapp.h"
 	#include "sdlevent.h"
 	#include "sdlsurf.h"
-	#include "anim.h"
-	#include "timer.h"
-	#include "entity.h"
-	#include "utils.h"
+	#include "sdlfont.h"
+
+	#include "sdlapp.h"
 
 #endif

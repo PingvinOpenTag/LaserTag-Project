@@ -27,7 +27,8 @@ SDL_Surface* SDLSurf::OnLoad( std::string filename )
 	//The optimized image that will be used
 	SDL_Surface* optimizedImage = NULL;
 	//Load the image
-	loadedImage = IMG_Load( filename.c_str() );
+	std::string path = DIR_RESOURCES + "/images/" + filename;
+	loadedImage = IMG_Load( path.c_str() );
 	//If the image loaded
 	if( loadedImage != NULL )
 		{
@@ -89,37 +90,46 @@ bool SDLSurf::Transparent( SDL_Surface* Surf_Dest, Uint32 color)
 		return false;
 	}
 
-	SDL_SetColorKey( Surf_Dest, SDL_SRCCOLORKEY | SDL_RLEACCEL, color);
+	if ( SDL_SetColorKey( Surf_Dest, SDL_SRCCOLORKEY | SDL_RLEACCEL, color) < 0 )
+		std::cerr<<"SDL_SetColorKey failed: ";
 
 	return true;
+}
+
+SDL_Surface* SDLSurf::CreateSurface( SDL_PixelFormat* Format, Uint32 flags, int Width, int Height )
+{
+
+	SDL_Surface *dst = NULL;
+
+	Uint32 Amask = 0;
+	if( flags & SDL_SRCCOLORKEY )
+		Amask = 0;
+	else
+		Amask = Format->Amask;
+
+	dst = SDL_CreateRGBSurface( SDL_HWSURFACE,
+									Width,
+									Height,
+									Format->BitsPerPixel,
+									Format->Rmask,
+									Format->Gmask,
+									Format->Bmask,
+									Amask );
+	if ( !dst )
+		std::cerr<<"CreateRGBSurface failed: "<<SDL_GetError()<<std::endl;
+
+	return dst;
 }
 
 SDL_Surface* SDLSurf::CopySurface( SDL_Surface* Surf_Src, Uint32 color)
 {
 	if( Surf_Src  == NULL )
-		return false;
+		return NULL;
 
-	Uint32 Amask = 0;
 	SDL_Surface *dst = NULL;
-
-	if( Surf_Src->flags & SDL_SRCCOLORKEY )
-		Amask = 0;
-	else
-		Amask = Surf_Src->format->Amask;
-
-	dst = SDL_CreateRGBSurface( SDL_SWSURFACE,
-									Surf_Src->w,
-									Surf_Src->h,
-									Surf_Src->format->BitsPerPixel,
-									Surf_Src->format->Rmask,
-									Surf_Src->format->Gmask,
-									Surf_Src->format->Bmask,
-									Amask );
-	if ( !dst )
-	{
-		std::cerr<<"CreateRGBSurface failed: "<<SDL_GetError()<<std::endl;
+	if ( !( dst = SDLSurf::CreateSurface( Surf_Src->format, Surf_Src->flags, Surf_Src->w, Surf_Src->h ) ) )
 		return dst;
-	}
+
 	//Go through columns
 	for( int x = 0; x < dst->w; x++ )
 	{
@@ -130,7 +140,7 @@ SDL_Surface* SDLSurf::CopySurface( SDL_Surface* Surf_Src, Uint32 color)
 			Uint32 pixel = getpixel( Surf_Src, x, y );;
 			//Copy pixel
 			if ( color != pixel)
-				pixel = SDL_MapRGB( Surf_Src->format, 0xFF, 0, 0xFF );
+				pixel = SDL_MapRGB( Surf_Src->format, SDL_COLORKEY.r, SDL_COLORKEY.g, SDL_COLORKEY.b );
 
 			putpixel( dst, x, y, pixel );
 		}

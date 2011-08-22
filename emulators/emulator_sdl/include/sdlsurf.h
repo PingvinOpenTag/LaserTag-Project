@@ -81,6 +81,16 @@
 				static bool UnLockSurface( SDL_Surface* Surf_Src );
 
 				/**
+				Create new surface with
+				@param Format* pixel format
+				@param flags surface flags
+				@param Width new surface width
+				@param Height new surface height
+				@return pointer to new SDL_Surface
+				*/
+				static SDL_Surface* CreateSurface( SDL_PixelFormat* Format, Uint32 flags, int Width, int Height );
+
+				/**
 				Copy surface by color mask
 				@param Surf_Src* surface to copy
 				@param color_mask color to copy
