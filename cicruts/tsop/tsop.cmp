@@ -1,0 +1,73 @@
+Cmp-Mod V01 Created by CvPCB (2010-04-21 BZR 23xx)-stable date = Втр 23 Авг 2011 03:15:14
+
+BeginCmp
+TimeStamp = /4E52DAB8;
+Reference = C1;
+ValeurCmp = >1uF;
+IdModule  = C1;
+EndCmp
+
+BeginCmp
+TimeStamp = /4E52DA0E;
+Reference = D1;
+ValeurCmp = TSOP34836;
+IdModule  = TO92-123;
+EndCmp
+
+BeginCmp
+TimeStamp = /4E52DA26;
+Reference = D2;
+ValeurCmp = TSOP34836;
+IdModule  = TO92-123;
+EndCmp
+
+BeginCmp
+TimeStamp = /4E52DA34;
+Reference = D3;
+ValeurCmp = TSOP34836;
+IdModule  = TO92-123;
+EndCmp
+
+BeginCmp
+TimeStamp = /4E52DB66;
+Reference = D4;
+ValeurCmp = LED;
+IdModule  = LEDV;
+EndCmp
+
+BeginCmp
+TimeStamp = /4E52DB6C;
+Reference = D5;
+ValeurCmp = LED;
+IdModule  = LED-5MM;
+EndCmp
+
+BeginCmp
+TimeStamp = /4E52DC97;
+Reference = P1;
+ValeurCmp = CONN_5;
+IdModule  = SIL-5;
+EndCmp
+
+BeginCmp
+TimeStamp = /4E52DA84;
+Reference = R1;
+ValeurCmp = 100;
+IdModule  = SM1206;
+EndCmp
+
+BeginCmp
+TimeStamp = /4E52DBD0;
+Reference = R2;
+ValeurCmp = 100;
+IdModule  = SM1206;
+EndCmp
+
+BeginCmp
+TimeStamp = /4E52DBD4;
+Reference = R3;
+ValeurCmp = 100;
+IdModule  = SM1206;
+EndCmp
+
+EndListe

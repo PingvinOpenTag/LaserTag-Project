@@ -1,0 +1,93 @@
+# EESchema Netlist Version 1.1 created  Втр 23 Авг 2011 03:15:14
+(
+ ( /4E52DAB8 C1 C1 >1uF
+  ( 1 N-000008 )
+  ( 2 GND )
+ )
+ ( /4E52DA0E TO92-123 D1 TSOP34836
+  ( 1 N-000004 )
+  ( 2 GND )
+  ( 3 N-000008 )
+ )
+ ( /4E52DA26 TO92-123 D2 TSOP34836
+  ( 1 N-000004 )
+  ( 2 GND )
+  ( 3 N-000008 )
+ )
+ ( /4E52DA34 TO92-123 D3 TSOP34836
+  ( 1 N-000004 )
+  ( 2 GND )
+  ( 3 N-000008 )
+ )
+ ( /4E52DB66 LEDV D4 LED
+  ( 1 N-000002 )
+  ( 2 GND )
+ )
+ ( /4E52DB6C LED-5MM D5 LED
+  ( 1 N-000007 )
+  ( 2 GND )
+ )
+ ( /4E52DC97 SIL-5 P1 CONN_5
+  ( 1 GND )
+  ( 2 N-000006 )
+  ( 3 N-000001 )
+  ( 4 N-000004 )
+  ( 5 VCC )
+ )
+ ( /4E52DA84 SM1206 R1 100
+  ( 1 N-000008 )
+  ( 2 VCC )
+ )
+ ( /4E52DBD0 SM1206 R2 100
+  ( 1 N-000002 )
+  ( 2 N-000001 )
+ )
+ ( /4E52DBD4 SM1206 R3 100
+  ( 1 N-000007 )
+  ( 2 N-000006 )
+ )
+)
+*
+{ Allowed footprints by component:
+$component C1
+ CP*
+ SM*
+$endlist
+$component D4
+ LED-3MM
+ LED-5MM
+ LED-10MM
+ LED-0603
+ LED-0805
+ LED-1206
+ LEDV
+$endlist
+$component D5
+ LED-3MM
+ LED-5MM
+ LED-10MM
+ LED-0603
+ LED-0805
+ LED-1206
+ LEDV
+$endlist
+$component R1
+ R?
+ SM0603
+ SM0805
+ R?-*
+$endlist
+$component R2
+ R?
+ SM0603
+ SM0805
+ R?-*
+$endlist
+$component R3
+ R?
+ SM0603
+ SM0805
+ R?-*
+$endlist
+$endfootprintlist
+}
