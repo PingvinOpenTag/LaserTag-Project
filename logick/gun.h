@@ -21,7 +21,7 @@
 #include <stdint.h>
 
 struct T_gun_status {
-  uint16_t amons;
+  uint16_t ammons;
   uint16_t health;
 
   uint8_t life;

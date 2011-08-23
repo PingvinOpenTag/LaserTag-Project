@@ -1,18 +1,20 @@
+LOGICK_DIR="../../logick"
+IFACE_DIR="../../interfaces"
 
 all:
-	make -C ../logick
-	gcc -c -save-temps emu.c
-	gcc -c hardware.c -I../interfaces
-	gcc emu.o hardware.o ../logick/gun.o -o main `ncurses5-config --libs`
+	make -C ${LOGICK_DIR}
+	gcc -c -save-temps emu.c  -I${LOGICK_DIR}
+	gcc -c hardware.c -I${IFACE_DIR}
+	gcc emu.o hardware.o ${LOGICK_DIR}/gun.o -o main `ncurses5-config --libs`
 	./main
 
 WINCC="mingw32-gcc"
 
 win:
-	make -C ../logick
+	make -C ${LOGICK_DIR}
 	${WINCC} -c -save-temps emu.c
-	${WINCC} -c hardware.c -I../interfaces
-	${WINCC} emu.o hardware.o ../logick/gun.o -o main `ncurses5-config --libs`
+	${WINCC} -c hardware.c -I${IFACE_DIR}
+	${WINCC} emu.o hardware.o ${LOGICK_DIR}/gun.o -o main `ncurses5-config --libs`
 	./main
 
 

@@ -39,9 +39,9 @@ int switch_to_dead()
 	return 0;
 }
 
-int block_amo(int ms)
+int block_ammo(int ms)
 {
-	printw("Block amo %i ms\n", ms);
+	printw("Block ammo %i ms\n", ms);
 
 	return 0;
 }

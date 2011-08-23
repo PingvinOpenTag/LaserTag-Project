@@ -45,7 +45,7 @@ int hitstat_clean()
 }
 
 int init(){
-	gun_status.amons=100;
+	gun_status.ammons=100;
 	gun_status.health=100;
   gun_status.life=1;
 	switch_to_life();
@@ -57,13 +57,13 @@ int shoot(){
     hook_you_dead();
     return 1;
   }
-	if(gun_status.amons==0){
+	if(gun_status.ammons==0){
     hook_empty_gun();
     return 2;
   }
 
-	gun_status.amons--;
-	block_amo(500); // 0.5 second
+	gun_status.ammons--;
+	block_ammo(500); // 0.5 second
 	return 0;
 }
 /*! 

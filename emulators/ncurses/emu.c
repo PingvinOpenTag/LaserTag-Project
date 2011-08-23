@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <curses.h>
 
-#include "../logick/gun.h"
+//##include "../logick/gun.h"
+#include <gun.h>
 
 /*! Hitting overlay
  */
@@ -155,7 +156,7 @@ int StatusWindow(int line)
 #define MSG(arg) \
   	wmove(w_status,i++,3); \
 		wprintw(w_status, #arg" -- %i", gun_status.arg);
-    MSG(amons);
+    MSG(ammons);
     MSG(health);
     MSG(life);
 #undef MSG
