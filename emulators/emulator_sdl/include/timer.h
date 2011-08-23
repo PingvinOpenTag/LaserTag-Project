@@ -26,31 +26,43 @@
 	class Timer
 	{
 		private:
-			//The clock time when the timer started
+			///The clock time when the timer started
 			int startTicks;
 
-			//The ticks stored when the timer was paused
+			///The ticks stored when the timer was paused
 			int pausedTicks;
 
-			//The timer status
+			/// @name The timer status
+			/// @{
 			bool paused;
 			bool started;
+			/// @}
 
 		public:
-			//Initializes variables
+			///Initializes variables
 			Timer();
 
-			//The various clock actions
+			/// @name The various clock actions
+			/// @{
+
+			/// Start timer
 			void start();
+			/// Stop timer
 			void stop();
+			/// Pause timer
 			void pause();
+			/// Unpause timer
 			void unpause();
 
-			//Gets the timer's time
+			/// @}
+
+			///Gets the timer's time
 			int get_ticks();
 
-			//Checks the status of the timer
+			/// @name Checks the status of the timer
+			/// @{
 			bool is_started();
 			bool is_paused();
+			/// @}
 	};
 #endif

@@ -22,4 +22,31 @@
 	#ifdef WIN32
 		void redirect_stdio(void);
 	#endif
+
+	/**
+	@function putpixel
+	Set the pixel at (x, y) to the given value
+	@warning The surface must be locked before calling this!
+	@param surface surface
+	@param x x coord
+	@param y y coord
+	@param pixel pixel color
+	*/
+	 void putpixel( SDL_Surface *surface, int x, int y, Uint32 pixel );
+
+	/**
+	@function getpixel
+	Return the pixel value at (x, y)
+	@warning The surface must be locked before calling this!
+	@param surface surface
+	@param x x coord
+	@param y y coord
+	@return pixel color at given coords
+	*/
+	Uint32 getpixel( SDL_Surface *surface, int x, int y );
+
+	int hit_head( void *arg );
+	int hit_chest( void *arg );
+	int hit_weapon( void *arg );
+
 #endif
