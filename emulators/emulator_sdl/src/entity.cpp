@@ -18,26 +18,43 @@
 
 #include "main.h"
 
-std::vector<CEntity*> CEntity::EntityList;
-
 CEntity::CEntity()
 {
-	Surf_Entity = NULL;
 	X = Y = 0.0f;
 	Width = Height = 0;
 	AnimState = 0;
+	Visible = true;
 }
 
 CEntity::~CEntity() {}
 
 bool CEntity::OnLoad( std::string filename, int Width, int Height, int MaxFrames )
 {
-	if ( ( Surf_Entity = SDLSurf::OnLoad( filename.c_str() ) ) == NULL )
+	if ( ( Surf_Obj = SDLSurf::OnLoad( filename.c_str() ) ) == NULL )
 	{
 		return false;
 	}
 
-	SDLSurf::Transparent(Surf_Entity, SDL_MapRGB( Surf_Entity->format, 0xFF, 0, 0xFF ));
+	Uint32 colorkey = GetSurfaceRGB( SDL_COLORKEY );
+	SDLSurf::Transparent(Surf_Obj, colorkey);
+
+	this->Width = Width;
+	this->Height = Height;
+
+	Anim_Control.MaxFrames = MaxFrames;
+
+	return true;
+}
+
+bool CEntity::OnLoad( SDL_Surface* Surf_Src, int Width, int Height, int MaxFrames )
+{
+	if ( Surf_Src == NULL )
+		return false;
+
+	Surf_Obj = Surf_Src;
+
+	Uint32 colorkey = GetSurfaceRGB( SDL_COLORKEY );
+	SDLSurf::Transparent(Surf_Obj, colorkey);
 
 	this->Width = Width;
 	this->Height = Height;
@@ -59,27 +76,50 @@ void CEntity::MoveFrame(int Frame)
 
 void CEntity::NextFrame()
 {
-	MoveFrame( 1 );
+	this->MoveFrame( 1 );
 }
 
 void CEntity::PrevFrame()
 {
-	MoveFrame( -1 );
+	this->MoveFrame( -1 );
+}
+
+CEntity* CEntity::Center( )
+{
+	this->CenterX();
+	this->CenterY();
+	return this;
+}
+
+CEntity* CEntity::CenterX( )
+{
+	this->X = this->X - this->Width/2;
+	return this;
+}
+
+CEntity* CEntity::CenterY( )
+{
+	this->Y = this->Y - this->Height/2;
+	return this;
 }
 
 void CEntity::OnRender(SDL_Surface* Surf_Display)
 {
-	if ( Surf_Entity == NULL || Surf_Display == NULL ) return;
+	if ( Surf_Obj == NULL || Surf_Display == NULL || !Visible ) return;
 
-	SDLSurf::OnDraw( Surf_Display, Surf_Entity, X, Y, AnimState * Width, Anim_Control.GetCurrentFrame() * Height, Width, Height );
+	SDL_Rect src;
+	src.x = AnimState * Width;
+	src.y = Anim_Control.GetCurrentFrame() * Height;
+	src.w = Width;
+	src.h = Height;
+
+	SDLSurf::OnDraw( Surf_Display, Surf_Obj, X, Y, src );
 }
 
-void CEntity::OnCleanup()
+Uint32 CEntity::OnMouseOver( int mX, int mY, bool GetColor )
 {
-	if ( Surf_Entity )
-	{
-		SDL_FreeSurface( Surf_Entity );
-	}
-
-	Surf_Entity = NULL;
+	if ( Surf_Obj == NULL ) return 0;
+	if ( ( mX < X || mY < Y ) || ( mX > X + Width || mY > Y + Height ) ) return 0;
+	return GetColor?SDLSurf::OnMouseOver( Surf_Obj, mX - X + AnimState * Width, mY - Y + Anim_Control.GetCurrentFrame() * Height):
+					1;
 }

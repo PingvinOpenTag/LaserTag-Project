@@ -16,42 +16,42 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __ENTITY_H__
-	#define __ENTITY_H__
+#ifndef __SDLFONT_H__
+	#define __SDLFONT_H__
 	#include "main.h"
 	/**
-	@class CEntity
-	Entity class
+	@class SDLFont
+	Basic class to handle fonts
 	*/
-
-	class CEntity : public SDLObject
+	class SDLFont : public SDLObject
 	{
-		protected:
-			CAnimation Anim_Control;
-
 		public:
-			int Width;
-			int Height;
+			unsigned int max_lines;
 
-			int AnimState;
+		protected:
+			TTF_Font *font;
+			SDL_Color fnt_color;
+			std::string text;
+			std::deque<SDL_Surface*> rendered;
+		public:
+			SDLFont();
+			virtual ~SDLFont();
 
-			CEntity();
-			virtual ~CEntity();
-
-			virtual bool OnLoad( std::string filename, int Width, int Height, int MaxFrames );
-			virtual bool OnLoad( SDL_Surface* Surf_Src, int Width, int Height, int MaxFrames );
+			virtual bool OnLoad( std::string fontname, int ptsize );
 
 			virtual void OnLoop();
 			virtual void OnRender( SDL_Surface* Surf_Display );
+			virtual void OnCleanup();
 
-			virtual void NextFrame();
-			virtual void PrevFrame();
-			virtual void MoveFrame( int Frame );
+			virtual SDLFont* AppendText( std::string text );
+			virtual SDLFont* SetText( std::string text );
+			virtual SDLFont* SetFontColor( SDL_Color color );
+			virtual SDLFont* SetFontColor( Uint8 r, Uint8 g, Uint8 b );
 
-			virtual CEntity* Center( );
-			virtual CEntity* CenterX( );
-			virtual CEntity* CenterY( );
+			virtual SDLFont* Center( );
+			virtual SDLFont* CenterX( );
+			virtual SDLFont* CenterY( );
 
-			virtual Uint32 OnMouseOver( int mX, int mY, bool GetColor = false );
+			virtual std::string GetText( );
 	};
 #endif

@@ -27,7 +27,8 @@ SDL_Surface* SDLSurf::OnLoad( std::string filename )
 	//The optimized image that will be used
 	SDL_Surface* optimizedImage = NULL;
 	//Load the image
-	loadedImage = IMG_Load( filename.c_str() );
+	std::string path = DIR_RESOURCES + "/images/" + filename;
+	loadedImage = IMG_Load( path.c_str() );
 	//If the image loaded
 	if( loadedImage != NULL )
 		{
@@ -36,6 +37,8 @@ SDL_Surface* SDLSurf::OnLoad( std::string filename )
 			//Free the old image
 			SDL_FreeSurface( loadedImage );
 		}
+	else
+		std::cerr<<"IMG_Load: "<<IMG_GetError( )<<std::endl;
 	//Return the optimized image
 	return optimizedImage;
 }
@@ -56,7 +59,7 @@ bool SDLSurf::OnDraw( SDL_Surface* Surf_Dest, SDL_Surface* Surf_Src, int X, int 
 	return true;
 }
 
-bool SDLSurf::OnDraw( SDL_Surface* Surf_Dest, SDL_Surface* Surf_Src, int X, int Y, int X2, int Y2, int W, int H )
+bool SDLSurf::OnDraw( SDL_Surface* Surf_Dest, SDL_Surface* Surf_Src, int X, int Y, SDL_Rect& Rect_Src )
 {
 	if( Surf_Dest == NULL || Surf_Src == NULL )
 	{
@@ -70,10 +73,10 @@ bool SDLSurf::OnDraw( SDL_Surface* Surf_Dest, SDL_Surface* Surf_Src, int X, int 
 
 	SDL_Rect SrcR;
 
-	SrcR.x = X2;
-	SrcR.y = Y2;
-	SrcR.w = W;
-	SrcR.h = H;
+	SrcR.x = Rect_Src.x;
+	SrcR.y = Rect_Src.y;
+	SrcR.w = Rect_Src.w;
+	SrcR.h = Rect_Src.h;
 
 	SDL_BlitSurface( Surf_Src, &SrcR, Surf_Dest, &DestR );
 
@@ -87,7 +90,88 @@ bool SDLSurf::Transparent( SDL_Surface* Surf_Dest, Uint32 color)
 		return false;
 	}
 
-	SDL_SetColorKey( Surf_Dest, SDL_SRCCOLORKEY | SDL_RLEACCEL, color);
+	if ( SDL_SetColorKey( Surf_Dest, SDL_SRCCOLORKEY | SDL_RLEACCEL, color) < 0 )
+		std::cerr<<"SDL_SetColorKey failed: ";
 
 	return true;
+}
+
+SDL_Surface* SDLSurf::CreateSurface( SDL_PixelFormat* Format, Uint32 flags, int Width, int Height )
+{
+
+	SDL_Surface *dst = NULL;
+
+	Uint32 Amask = 0;
+	if( flags & SDL_SRCCOLORKEY )
+		Amask = 0;
+	else
+		Amask = Format->Amask;
+
+	dst = SDL_CreateRGBSurface( SDL_HWSURFACE,
+									Width,
+									Height,
+									Format->BitsPerPixel,
+									Format->Rmask,
+									Format->Gmask,
+									Format->Bmask,
+									Amask );
+	if ( !dst )
+		std::cerr<<"CreateRGBSurface failed: "<<SDL_GetError()<<std::endl;
+
+	return dst;
+}
+
+SDL_Surface* SDLSurf::CopySurface( SDL_Surface* Surf_Src, Uint32 color)
+{
+	if( Surf_Src  == NULL )
+		return NULL;
+
+	SDL_Surface *dst = NULL;
+	if ( !( dst = SDLSurf::CreateSurface( Surf_Src->format, Surf_Src->flags, Surf_Src->w, Surf_Src->h ) ) )
+		return dst;
+
+	//Go through columns
+	for( int x = 0; x < dst->w; x++ )
+	{
+		//Go through rows
+		for( int y = 0; y < dst->h; y++ )
+		{
+			//Get pixel
+			Uint32 pixel = getpixel( Surf_Src, x, y );;
+			//Copy pixel
+			if ( color != pixel)
+				pixel = SDL_MapRGB( Surf_Src->format, SDL_COLORKEY.r, SDL_COLORKEY.g, SDL_COLORKEY.b );
+
+			putpixel( dst, x, y, pixel );
+		}
+	}
+	return dst;
+}
+
+bool SDLSurf::LockSurface( SDL_Surface* Surf_Src )
+{
+	if ( SDL_MUSTLOCK(Surf_Src) )
+	{
+		if ( SDL_LockSurface(Surf_Src) < 0 )
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+bool SDLSurf::UnLockSurface( SDL_Surface* Surf_Src )
+{
+	if ( SDL_MUSTLOCK(Surf_Src) )
+	{
+		SDL_UnlockSurface(Surf_Src);
+	}
+	return true;
+}
+
+Uint32 SDLSurf::OnMouseOver( SDL_Surface* Surf_Src, int mX, int mY)
+{
+	Uint32 color;
+	color = getpixel( Surf_Src, mX, mY );
+	return color;
 }

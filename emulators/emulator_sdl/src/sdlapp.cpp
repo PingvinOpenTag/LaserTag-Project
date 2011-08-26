@@ -18,23 +18,75 @@
 
 #include "main.h"
 
+std::vector<SDLObject*> SDLObject::ObjectList;
+
 bool SDLApp::OnInit( )
 {
 	if ( SDL_Init(SDL_INIT_VIDEO) < 0 )
 	{
+		std::cerr<<"Unable to init SDL: "<<SDL_GetError()<<std::endl;
 		return false;
 	}
 
 	if ( ( Surf_Display = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_BPP, SDL_HWSURFACE | SDL_DOUBLEBUF) ) == NULL )
 	{
+		std::cerr<<"Unable to set video mode: "<<SDL_GetError()<<std::endl;
 		return false;
 	}
 
-	if(	!sprite.OnLoad("./resources/man.png", 125, 440, 8) )
+	if( TTF_Init() < 0 )
 	{
+		std::cerr<<"Unable to init TTF: "<<TTF_GetError()<<std::endl;
 		return false;
 	}
-	sprite.X = SCREEN_WIDTH/2 - 62.5f;
+
+	SDL_WM_SetCaption( "Emulator SDL", NULL );
+
+	CEntity* tmp_entity = NULL;
+
+	tmp_entity = new CEntity();
+
+	if(	!tmp_entity->OnLoad("man.png", 125, 440, 8) )
+		return false;
+	else
+		target = tmp_entity;
+
+	tmp_entity = new CEntity();
+	if(	!tmp_entity->OnLoad("zone.png", 125, 440, 8) )
+		return false;
+	else
+		zone = tmp_entity;
+
+	T_HitZone tmp[] = { {"Head", NULL, zone->GetSurfaceRGB( 0x00, 0xFF, 0x00 ), hit_head},
+						{"Chest", NULL, zone->GetSurfaceRGB( 0xFF, 0x00, 0x00 ), hit_chest},
+						{"Weapon", NULL, zone->GetSurfaceRGB( 0x00, 0x00, 0xFF ), hit_weapon} };
+
+	zone->LockSurface( );
+	for ( int i = 0; i < 3; i++ )
+	{
+		tmp_entity = new CEntity();
+		if ( !tmp_entity->OnLoad( SDLSurf::CopySurface( zone->GetSurface(), tmp[i].color ), 125, 440, 8 ) )
+			return false;
+		tmp_entity->fMoveTo( SCREEN_WIDTH/2, 0 )->CenterX( )->SetVisible( false );
+		tmp[i].zone = tmp_entity;
+		zone_list[tmp[i].color] = tmp[i];
+	}
+	zone->UnLockSurface( );
+
+	target->fMoveTo( SCREEN_WIDTH/2, 0 )->CenterX( );
+	zone->fMoveTo( SCREEN_WIDTH/2, 0 )->CenterX( )->SetVisible( false );
+
+	SDLObject::ObjectList.push_back( target );
+	SDLObject::ObjectList.push_back( zone );
+
+	for ( int i = 0; i < 3; i++ )
+		SDLObject::ObjectList.push_back( tmp[i].zone );
+
+	font = new SDLFont();
+	if ( !font->OnLoad( "main.ttf", 16 ) )
+		return false;
+
+	SDLObject::ObjectList.push_back( font );
 
     return true;
 }
@@ -49,8 +101,49 @@ void SDLApp::OnExit()
 	running = false;
 }
 
+void SDLApp::OnLButtonUp( int mX, int mY )
+{
+	if ( CurrentZone )
+	{
+		CurrentZone->func(NULL);
+		Uint8 r, g, b;
+		SDL_GetRGB(CurrentZone->color, zone->GetSurface()->format, &r, &g, &b);
+		SDL_Color color = { r, g, b};
+
+		std::ostringstream os;
+		os << SDL_GetTicks()/1000 << " Target: " << CurrentZone->zone_name << std::endl;
+
+		font->SetFontColor( color )->AppendText( os.str( ) );
+	}
+}
+
+void SDLApp::OnMouseMove( int mX, int mY, int relX, int relY, bool Left, bool Right, bool Middle )
+{
+	if ( CurrentZone )
+	{
+		CurrentZone->zone->SetVisible( false );
+		CurrentZone = NULL;
+	}
+	if ( zone->LockSurface( ) )
+	{
+		Uint32 color = zone->OnMouseOver( mX, mY, true );
+		if ( zone_list.count(color) )
+		{
+			CurrentZone = &zone_list[color];
+			CurrentZone->zone->SetVisible( true );
+		}
+	}
+
+	zone->UnLockSurface( );
+}
+
 void SDLApp::OnKeyDown( SDLKey sym, SDLMod mod, Uint16 unicode)
 {
+	if ( CurrentZone )
+	{
+		CurrentZone->zone->SetVisible( false );
+		CurrentZone = NULL;
+	}
 	switch (sym)
 	{
 		case SDLK_q:
@@ -64,6 +157,9 @@ void SDLApp::OnKeyDown( SDLKey sym, SDLMod mod, Uint16 unicode)
 		case SDLK_d:
 			r_direction = ROTATE_LEFT;
 		break;
+
+		default:
+			break;
 	}
 }
 
@@ -79,58 +175,62 @@ void SDLApp::OnKeyUp( SDLKey sym, SDLMod mod, Uint16 unicode)
 		case SDLK_d:
 			r_direction = ROTATE_NONE;
 		break;
+
+		default:
+			break;
 	}
 }
 
 void SDLApp::OnLoop( )
 {
-	for ( int i = 0;i < CEntity::EntityList.size();i++ )
+	for ( unsigned int i = 0; i < SDLObject::ObjectList.size(); i++ )
 	{
-		if ( !CEntity::EntityList[i] ) continue;
-		CEntity::EntityList[i]->OnLoop();
+		if ( !SDLObject::ObjectList[i] ) continue;
+			switch ( r_direction )
+			{
+				case ROTATE_LEFT:
+					SDLObject::ObjectList[i]->NextFrame( );
+				break;
+				case ROTATE_RIGHT:
+					SDLObject::ObjectList[i]->PrevFrame( );
+				break;
+			}
 	}
-	
-	switch	( r_direction )
-	{
-		case	ROTATE_LEFT:
-			sprite.NextFrame( );
-		break;
-		case	ROTATE_RIGHT:
-			sprite.PrevFrame( );
-		break;
-	}		
 }
 
 void SDLApp::OnRender()
 {
 	SDL_FillRect(Surf_Display, NULL, 0x000000);
-	for( int i = 0;i < CEntity::EntityList.size();i++ )
+	for( unsigned int i = 0;i < SDLObject::ObjectList.size();i++ )
 	{
-		if( !CEntity::EntityList[i] ) continue;
-		CEntity::EntityList[i]->OnRender( Surf_Display );
+		if( !SDLObject::ObjectList[i] ) continue;
+		SDLObject::ObjectList[i]->OnRender( Surf_Display );
 	}
-	sprite.OnRender( Surf_Display );
     SDL_Flip(Surf_Display);
 }
 
 void SDLApp::OnCleanup()
 {
-//	SDL_FreeSurface(Surf_Image);
-	for( int i = 0;i < CEntity::EntityList.size();i++ )
+	for( unsigned int i = 0; i < SDLObject::ObjectList.size(); i++ )
 	{
-		if( !CEntity::EntityList[i] ) continue;
-		CEntity::EntityList[i]->OnCleanup();
+		if( !SDLObject::ObjectList[i] )
+			continue;
+
+		SDLObject::ObjectList[i]->OnCleanup();
+		delete SDLObject::ObjectList[i];
 	}
-	CEntity::EntityList.clear();
+	SDLObject::ObjectList.clear();
 
 	SDL_FreeSurface(Surf_Display);
+	TTF_Quit();
 	SDL_Quit();
 }
 
 SDLApp::SDLApp()
 {
-	Surf_Display = NULL;
-	Surf_Image = NULL;
+	Surf_Display = Surf_Image = NULL;
+	zone = target = NULL;
+	CurrentZone = NULL;
 	running = true;
 }
 
@@ -141,11 +241,12 @@ int SDLApp::OnExecute()
 
 	SDL_Event Event;
 	Timer fps;
-	
+	int cap = 1;
+
 	while( running )
 	{
 		fps.start();
-		
+
 		while( SDL_PollEvent( &Event ) )
 		{
 			OnEvent(&Event);
@@ -153,7 +254,7 @@ int SDLApp::OnExecute()
 		OnLoop();
 		OnRender();
 		//If we want to cap the frame rate
-		if ( ( true ) && ( fps.get_ticks() < 1000 / FRAMES_PER_SECOND ) )
+		if ( ( cap == 1 ) && ( fps.get_ticks() < 1000 / FRAMES_PER_SECOND ) )
 		{
 			//Sleep the remaining frame time
 			SDL_Delay( ( 1000 / FRAMES_PER_SECOND ) - fps.get_ticks() );
