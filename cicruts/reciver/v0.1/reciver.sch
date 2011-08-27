@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date Сбт 27 Авг 2011 18:54:45
+EESchema Schematic File Version 2  date Сбт 27 Авг 2011 23:40:51
 LIBS:power
 LIBS:device
 LIBS:transistors
@@ -181,7 +181,7 @@ L R R1
 U 1 1 4E58FCCC
 P 4800 3300
 F 0 "R1" V 4880 3300 50  0000 C CNN
-F 1 "R68" V 4800 3300 50  0000 C CNN
+F 1 "R20" V 4800 3300 50  0000 C CNN
 	1    4800 3300
 	1    0    0    -1  
 $EndComp
