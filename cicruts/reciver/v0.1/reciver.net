@@ -1,0 +1,83 @@
+# EESchema Netlist Version 1.1 created  Сбт 27 Авг 2011 18:54:53
+(
+ ( /4E58FEB1 $noname  P2 TSAL_out {Lib=CONN_2}
+  (    1 VCC )
+  (    2 N-000007 )
+ )
+ ( /4E58FD27 $noname  C1 >65mF {Lib=CP1}
+  (    1 VCC )
+  (    2 GND )
+ )
+ ( /4E58FCCC $noname  R1 R68 {Lib=R}
+  (    1 VCC )
+  (    2 N-000006 )
+ )
+ ( /4E58FCB9 $noname  R2 R20 {Lib=R}
+  (    1 GND )
+  (    2 N-000003 )
+ )
+ ( /4E58FC8F $noname  Q2 2N7002 {Lib=MOSFET_N}
+  (    D N-000007 )
+  (    G N-000004 )
+  (    S N-000003 )
+ )
+ ( /4E58FC78 $noname  Q1 2N7002 {Lib=MOSFET_N}
+  (    D N-000007 )
+  (    G N-000005 )
+  (    S GND )
+ )
+ ( /4E58FBB2 $noname  P1 CONN_4 {Lib=CONN_4}
+  (    1 GND )
+  (    2 N-000004 )
+  (    3 N-000005 )
+  (    4 N-000006 )
+ )
+)
+*
+{ Allowed footprints by component:
+$component C1
+ CP*
+ SM*
+$endlist
+$component R1
+ R?
+ SM0603
+ SM0805
+ R?-*
+$endlist
+$component R2
+ R?
+ SM0603
+ SM0805
+ R?-*
+$endlist
+$endfootprintlist
+}
+{ Pin List by Nets
+Net 1 "VCC" "VCC"
+ R1 1
+ C1 1
+ P2 1
+Net 2 "GND" "GND"
+ P1 1
+ C1 2
+ R2 1
+ Q1 S
+Net 3 "" ""
+ R2 2
+ Q2 S
+Net 4 "" ""
+ Q2 G
+ P1 2
+Net 5 "" ""
+ Q1 G
+ P1 3
+Net 6 "" ""
+ R1 2
+ P1 4
+Net 7 "" ""
+ Q1 D
+ P2 2
+ Q2 D
+}
+#End
