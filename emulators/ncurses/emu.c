@@ -7,7 +7,7 @@
 /*! Hitting overlay
  */
 int ovr_hitstatclear(void *arg){
-  //H_hitstat_clean();
+  //E_hitstat_clean();
   //not realizeted
 	return 0;
 }
