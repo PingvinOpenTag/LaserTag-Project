@@ -1,7 +1,11 @@
 
-CFLAGS=-I../interfaces -Wall
+#CFLAGS=-I../interfaces -Wall
+CFLAGS=-I. -Wall
 
 all: gun.o ircoder.o ircoder
+
+doxy:
+	doxygen Doxygenfile
 
 %.o: %.c
 	gcc -O0 -g -c -o $@ $< ${CFLAGS}

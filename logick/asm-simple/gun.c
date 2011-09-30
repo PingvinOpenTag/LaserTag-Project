@@ -16,7 +16,6 @@
  * =====================================================================================
  */
 
-#include <hardware.h>
 #include "gun.h"
 
 // FIXME -- move it for hell
@@ -44,36 +43,34 @@ int hitstat_clean()
   return 0;
 }
 
-int init(){
+int E_init(){
 	gun_status.ammons=100;
 	gun_status.health=100;
   gun_status.life=1;
-	switch_to_life();
+	H_switch_to_life();
 	return 0;
 }
 
-int shoot(){
+int E_shoot(){
   if(gun_status.life==0){
-    hook_you_dead();
-    return 1;
+    //hook_you_dead();
+    return 1; // FIXME you are dead
   }
 	if(gun_status.ammons==0){
-    hook_empty_gun();
-    return 2;
+    //hook_empty_gun();
+    return 2; // FIXME gun is emtpy
   }
 
 	gun_status.ammons--;
-	block_ammo(500); // 0.5 second
+  H_shoot(gun_status.group,
+          gun_status.pid,
+          gun_status.power,0);
+
+	H_block_ammo(500); // 0.5 second
 	return 0;
 }
-/*! 
- * group -- number of command
- * pid -- Player ID
- * power -- power of GUN
- * loc -- location of
- */
 
-int hitting(int group, int pid, int power, int loc)
+int E_hitting(int group, int pid, int power, int loc)
 {
   if(gun_status.life == 0) 
     return 1;
@@ -82,7 +79,7 @@ int hitting(int group, int pid, int power, int loc)
 	if(--gun_status.health==0){
     gun_status.health=0;
     gun_status.life=0;
-		switch_to_dead();
+		H_switch_to_dead();
 	}
   if(hitstat_cur<HITSIZE){
     hitstat[hitstat_cur].time=0;
@@ -92,7 +89,8 @@ int hitting(int group, int pid, int power, int loc)
     hitstat[hitstat_cur].loc=loc;
     hitstat_cur++;
   }else{
-    hook_hitstat_overflow();
+    //H_hook_hitstat_overflow();
+    //FIXME -- think about overflow exeptions.
   }
 
 	return 0;
