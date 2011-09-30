@@ -1,0 +1,11 @@
+Описание сборки LaserTag от asm-a.
+
+Для сборки полноценной игрушки необходимо:
+* Собрать модель (logick/asm-simple), собрать под 
+  архитектуру AVR.
+* Собрать firmware (asm-usb-0.1).
+* Изготовить платы:
+** MainBoard (avr/main_board)
+** Reciver (tools/asm-reciver) 
+
+
