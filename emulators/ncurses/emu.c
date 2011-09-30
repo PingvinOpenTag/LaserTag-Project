@@ -7,25 +7,26 @@
 /*! Hitting overlay
  */
 int ovr_hitstatclear(void *arg){
-  hitstat_clean();
+  //H_hitstat_clean();
+  //not realizeted
 	return 0;
 }
 /*! Hitting overlay
  */
 int ovr_hitting(void *arg){
-  hitting(0,0,1,0);
+  E_hitting(0,0,1,0);
 	return 0;
 }
 /*! Init overlay
  */
 int ovr_init(void *arg){
-  init();
+  E_init();
 	return 0;
 }
 /*! Shoot overlay
  */
 int ovr_shoot(void *arg){
-  shoot();
+  E_shoot();
 	return 0;
 }
 /////// END OVERLAYS /////////
@@ -38,8 +39,8 @@ struct option{
 };
 
 struct option optlist[] = {
-	{init,    32, "Init GUN"},
-	{shoot,   97,  "Shoot from GUN"},
+	{ovr_init,    32, "Init GUN"},
+	{ovr_shoot,   97,  "Shoot from GUN"},
 	{ovr_hitting, 115,  "Hitting from Player"},
 	{ovr_hitstatclear, 100,  "Clear status"},
 };

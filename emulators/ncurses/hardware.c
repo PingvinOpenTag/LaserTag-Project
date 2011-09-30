@@ -15,7 +15,7 @@
  *
  * =====================================================================================
  */
-#include "hardware.h"
+//#include "hardware.h"
 #include <stdio.h>
 
 int poweron(){
@@ -25,27 +25,31 @@ int poweron(){
 	return 0;
 }
 
-int switch_to_life()
+int H_switch_to_life()
 {
 	printw("Switch to life\n");
 
 	return 0;
 }
 
-int switch_to_dead()
+int H_switch_to_dead()
 {
 	printw("Switch to dead\n");
 
 	return 0;
 }
 
-int block_ammo(int ms)
+int H_block_ammo(int ms)
 {
 	printw("Block ammo %i ms\n", ms);
 
 	return 0;
 }
 
+int H_shoot(int group, int pid,int power, int loc){
+ printw("SHOT: %i, %i, %i, %i\n", group, pid, power, loc); 
+ return 0;
+}
 
 // HOOKS
 
