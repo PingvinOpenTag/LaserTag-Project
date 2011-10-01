@@ -1,7 +1,3 @@
-Abstract
-========
-
-This is a LaserTag project.
 
 Overview
 ========
