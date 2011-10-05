@@ -25,18 +25,18 @@ project (${App_Name})
 #	message (FATAL_ERROR "You must run cmake from a directory that is not in your source tree, or that is in a special subdirectory of the tree whose name begins with ‘build’.")
 #endif ()
 
-file( MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/resources )
-file( MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/resources/fonts )
-file( MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/resources/images )
+file( MAKE_DIRECTORY ${${App_Name}_BINARY_DIR}/resources )
+file( MAKE_DIRECTORY ${${App_Name}_BINARY_DIR}/resources/fonts )
+file( MAKE_DIRECTORY ${${App_Name}_BINARY_DIR}/resources/images )
 
 if (WIN32)
-	execute_process(COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/resources/images/man_sprite.png ${CMAKE_BINARY_DIR}/resources/images/man.png)
-	execute_process(COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/resources/images/zone_sprite.png ${CMAKE_BINARY_DIR}/resources/images/zone.png)
-	execute_process(COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/resources/fonts/main.ttf ${CMAKE_BINARY_DIR}/resources/fonts/main.ttf)
+	execute_process(COMMAND ${CMAKE_COMMAND} -E copy ${${App_Name}_SOURCE_DIR}/resources/images/man_sprite.png ${${App_Name}_BINARY_DIR}/resources/images/man.png)
+	execute_process(COMMAND ${CMAKE_COMMAND} -E copy ${${App_Name}_SOURCE_DIR}/resources/images/zone_sprite.png ${${App_Name}_BINARY_DIR}/resources/images/zone.png)
+	execute_process(COMMAND ${CMAKE_COMMAND} -E copy ${${App_Name}_SOURCE_DIR}/resources/fonts/main.ttf ${${App_Name}_BINARY_DIR}/resources/fonts/main.ttf)
 else ()
-	execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/resources/images/man_sprite.png ${CMAKE_BINARY_DIR}/resources/images/man.png)
-	execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/resources/images/zone_sprite.png ${CMAKE_BINARY_DIR}/resources/images/zone.png)
-	execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/resources/fonts/main.ttf ${CMAKE_BINARY_DIR}/resources/fonts/main.ttf)
+	execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${${App_Name}_SOURCE_DIR}/resources/images/man_sprite.png ${${App_Name}_BINARY_DIR}/resources/images/man.png)
+	execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${${App_Name}_SOURCE_DIR}/resources/images/zone_sprite.png ${${App_Name}_BINARY_DIR}/resources/images/zone.png)
+	execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${${App_Name}_SOURCE_DIR}/resources/fonts/main.ttf ${${App_Name}_BINARY_DIR}/resources/fonts/main.ttf)
 endif ()
 ################################################################################
 # Set up the basic build environment
@@ -50,25 +50,26 @@ endif ()
 ################################################################################
 # The core project files
 
-file (GLOB SRCS src/*.cpp)
-file (GLOB HDRS include/*.h include/*.hpp)
+file (GLOB SRCS ${${App_Name}_SOURCE_DIR}/src/*.cpp)
+#file (GLOB HDRS ${${App_Name}_SOURCE_DIR}/include/*.h)
 
 link_directories (
   )
 
 include_directories (
   ${CMAKE_SOURCE_DIR}/include
+  ${${App_Name}_SOURCE_DIR}/include
   )
 
 if (WIN32)
   add_executable (${App_Name} WIN32
     ${SRCS}
-    ${HDRS}
+ #   ${HDRS}
     )
 else ()
   add_executable (${App_Name}
     ${SRCS}
-    ${HDRS}
+  #  ${HDRS}
     )
 endif ()
 
