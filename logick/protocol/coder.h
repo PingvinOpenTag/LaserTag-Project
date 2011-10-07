@@ -1,5 +1,5 @@
 /*
- * coder.c  - Coder for IR receiver
+ * coder.h  - Coder for IR receiver
  * Creation Date: 2011-09-07
  *
  * Copyright (C) 2011 Leonid Myravjev (asm@asm.pp.ru)
@@ -31,5 +31,7 @@
  * This function get code (array uint8_t), and
  * generate object for resiver.
  */
+
+#include <stdint.h>
 
 int code2ir(uint8_t *buff, int size);
